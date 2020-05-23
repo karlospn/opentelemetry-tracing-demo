@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry.Trace;
 
 namespace Invoke.WebApi.Controllers
 {
@@ -9,11 +12,15 @@ namespace Invoke.WebApi.Controllers
     public class DummyController : ControllerBase
     {
         private readonly ILogger<DummyController> _logger;
+       
 
-
-        public DummyController(ILogger<DummyController> logger)
+        public DummyController(
+            ILogger<DummyController> logger,
+            IServiceProvider serviceProvider
+            )
         {
             _logger = logger;
+
         }
 
         [HttpGet]

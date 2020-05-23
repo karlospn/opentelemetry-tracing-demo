@@ -1,6 +1,10 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using OpenTelemetry.Trace;
 
 namespace Publisher.WebApi.Controllers
 {
@@ -10,9 +14,15 @@ namespace Publisher.WebApi.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public CallApiController(IHttpClientFactory httpClientFactory)
+
+        public CallApiController(
+            IHttpClientFactory httpClientFactory, 
+            IServiceProvider serviceProvider
+        )
         {
             _httpClientFactory = httpClientFactory;
+          
+
         }
 
 
