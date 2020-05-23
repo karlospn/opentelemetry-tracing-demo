@@ -32,7 +32,7 @@ namespace Consumer.ConsoleApp
             {
                 var message = Encoding.UTF8.GetString(ea.Body.Span);
                 Console.WriteLine(" Message Received: " + message);
-                await httpClient.GetAsync("/Invoke");
+                await httpClient.GetAsync("/dummier");
                 rabbitMqChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
 
             };

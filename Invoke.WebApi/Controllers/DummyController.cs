@@ -1,17 +1,25 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Invoke.WebApi.Controllers
 {
     [ApiController]
-    [Route("Invoke")]
+    [Route("dummy")]
     public class DummyController : ControllerBase
     {
+        private readonly ILogger<DummyController> _logger;
+
+
+        public DummyController(ILogger<DummyController> logger)
+        {
+            _logger = logger;
+        }
 
         [HttpGet]
-        public void Get()
+        public string Get()
         {
-           Console.WriteLine("You call my api");
+            return "You call a dummy endpoint";
         }
     }
 }

@@ -6,7 +6,10 @@
 
   <ItemGroup>
     <PackageReference Include="OpenTelemetry" Version="0.2.0-alpha.275" />
+    <PackageReference Include="OpenTelemetry.Collector.AspNetCore" Version="0.2.0-alpha.179" />
+    <PackageReference Include="OpenTelemetry.Collector.Dependencies" Version="0.2.0-alpha.179" />
     <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="0.2.0-alpha.275" />
+    <PackageReference Include="OpenTelemetry.Hosting" Version="0.2.0-alpha.220" />
     <PackageReference Include="RabbitMQ.Client" Version="6.0.0" />
   </ItemGroup>
 
