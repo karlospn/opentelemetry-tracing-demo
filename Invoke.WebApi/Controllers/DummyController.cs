@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Reflection;
+using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry.Trace;
 
 namespace Invoke.WebApi.Controllers
 {
@@ -26,6 +25,8 @@ namespace Invoke.WebApi.Controllers
         [HttpGet]
         public string Get()
         {
+            Console.WriteLine(JsonSerializer.Serialize(Activity.Current));
+
             return "You call a dummy endpoint";
         }
     }
