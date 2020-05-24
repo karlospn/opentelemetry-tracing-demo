@@ -50,7 +50,7 @@ namespace Publisher.WebApi.Controllers
 
                 channel.BasicPublish(exchange: "",
                     routingKey: "sample",
-                    basicProperties: null,
+                    basicProperties: props,
                     body: body);
             }
 
