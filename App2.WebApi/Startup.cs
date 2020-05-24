@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using App2.WebApi.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +26,9 @@ namespace App2.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<ISqlRepository, SqlRepository>();
+            services.AddTransient<IRabbitRepository, RabbitRepository>();
+
             services.AddControllers();
             services.AddOpenTelemetry((sp, builder) =>
             {

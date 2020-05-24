@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Resources;
@@ -71,7 +73,8 @@ namespace App3.RabbitConsumer.Console
             var rabbitMqChannel = rabbitMqConnection.CreateModel();
 
             var httpClient = new HttpClient {BaseAddress = new Uri("http://localhost:5001")};
-            
+
+
             var assemblyName = Assembly.GetEntryAssembly().GetName();
             var name = assemblyName.Name.ToLowerInvariant();
             var version = assemblyName.Version;
@@ -117,7 +120,8 @@ namespace App3.RabbitConsumer.Console
             {
                 var activity = new Activity("Process RabbitMq message");
 
-                if (ea.BasicProperties.Headers.TryGetValue("traceparent", out var rawTraceParent) &&
+                if (ea.BasicProperties?.Headers != null && 
+                    ea.BasicProperties.Headers.TryGetValue("traceparent", out var rawTraceParent) && 
                     rawTraceParent is byte[] binRawTraceParent)
                 {
                     activity.SetParentId(Encoding.UTF8.GetString(binRawTraceParent));
@@ -133,8 +137,12 @@ namespace App3.RabbitConsumer.Console
 
                 var message = Encoding.UTF8.GetString(ea.Body.Span);
                 System.Console.WriteLine(" Message Received: " + message);
-                
-                await httpClient.GetAsync("/sql/save");
+
+                var result = await httpClient.PostAsync("/sql/save", 
+                    new StringContent(JsonSerializer.Serialize(message), 
+                        Encoding.UTF8, 
+                        "application/json"));
+
                 rabbitMqChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
 
 

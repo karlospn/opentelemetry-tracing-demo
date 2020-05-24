@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using App2.WebApi.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App2.WebApi.Controllers
@@ -7,11 +9,26 @@ namespace App2.WebApi.Controllers
     [Route("sql/save")]
     public class MessageToSqlController : ControllerBase
     {
+        private readonly ISqlRepository _repository;
+        private readonly IRabbitRepository _eventPublisher;
 
-        [HttpGet]
-        public void Get()
+        public MessageToSqlController(ISqlRepository repository, 
+            IRabbitRepository eventPublisher)
         {
-           Console.WriteLine("You call another dummy endpoint");
+            _repository = repository;
+            _eventPublisher = eventPublisher;
+        }
+
+        [HttpPost]
+        public async Task PostMessage([FromBody]string message)
+        {
+           Console.WriteLine("You call sql save message endpoint");
+           if (!string.IsNullOrEmpty(message))
+           {
+               await _repository.Persist(message);
+               _eventPublisher.Publish(new MessagePersistedEvent {Message = message});
+           }
+
         }
     }
 }
