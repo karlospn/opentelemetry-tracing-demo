@@ -14,21 +14,8 @@ namespace Publisher.WebApi.Controllers
     [Route("publish")]
     public class PublishMessageController : ControllerBase
     {
-        private readonly Tracer _tracer;
         private static readonly DiagnosticSource diagnosticSource = new DiagnosticListener("RabbitMq.Publish");
 
-
-        public PublishMessageController(IServiceProvider serviceProvider)
-        {
-            var tracerFactory = serviceProvider.GetService<TracerFactoryBase>();
-
-            var assemblyName = Assembly.GetEntryAssembly()?.GetName();
-            var name = $"{assemblyName?.Name.ToLowerInvariant()}-enqueue";
-            var version = assemblyName?.Version;
-
-            _tracer = tracerFactory?.GetTracer(name, $"semver:{version?.ToString()}");
-
-        }
 
         [HttpGet]
         public void Get()
@@ -37,8 +24,6 @@ namespace Publisher.WebApi.Controllers
             Activity activity = null;
             if (diagnosticSource.IsEnabled("RabbitMq.Publish"))
             {
-                // Generates the Publishing to RabbitMQ trace
-                // Only generated if there is an actual listener
                 activity = new Activity("Publish message to RabbitMQ");
                 diagnosticSource.StartActivity(activity, null);
             }
