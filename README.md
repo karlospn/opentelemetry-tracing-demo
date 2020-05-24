@@ -1,5 +1,5 @@
 # Introduction
-These repository contains and example about how to use opentelemetry for tracing when we have a bunch of distributed applications
+These repository contains an example about how to use opentelemetry for tracing when we have a bunch of distributed applications
 
 # Content
 
