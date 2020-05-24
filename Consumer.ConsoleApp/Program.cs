@@ -21,38 +21,48 @@ namespace Consumer.ConsoleApp
     { 
         public static void Main(string[] args)
         {
-            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
-            Activity.ForceDefaultIdFormat = true;
+            try
+            {
+                Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+                Activity.ForceDefaultIdFormat = true;
 
-            var serviceProvider = new ServiceCollection().
-                AddOpenTelemetry((sp, builder) =>
-                {
-                    var name = Assembly.GetEntryAssembly()?
-                        .GetName()
-                        .ToString()
-                        .ToLowerInvariant();
+                var serviceProvider = new ServiceCollection().
+                    AddOpenTelemetry((sp, builder) =>
+                    {
+                        var name = Assembly.GetEntryAssembly()?
+                            .GetName()
+                            .ToString()
+                            .ToLowerInvariant();
 
-                    builder
-                        .AddRequestAdapter()
-                        .AddDependencyAdapter()
-                        .SetResource(new Resource(new Dictionary<string, object>
-                        {
-                            { "service.name", name },
-                            { "Description", "consumer console app" }
-                        }))
-                        .SetSampler(new AlwaysOnSampler())
-                        .UseJaeger(o =>
-                        {
-                            o.ServiceName = name;
-                            o.AgentHost = "localhost";
-                            o.AgentPort = 6831;
-                            o.MaxPacketSize = 65000;
+                        builder
+                            .AddRequestAdapter()
+                            .AddDependencyAdapter()
+                            .SetResource(new Resource(new Dictionary<string, object>
+                            {
+                                { "service.name", name },
+                                { "Description", "consumer console app" }
+                            }))
+                            .SetSampler(new AlwaysOnSampler())
+                            .UseJaeger(o =>
+                            {
+                                o.ServiceName = name;
+                                o.AgentHost = "localhost";
+                                o.AgentPort = 6831;
+                                o.MaxPacketSize = 65000;
 
-                        });
-                })
-                .BuildServiceProvider();
+                            });
+                    })
+                    .BuildServiceProvider();
 
-            DoWork(serviceProvider);
+                DoWork(serviceProvider);
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+           
         }
 
         private static void DoWork(IServiceProvider sp)
@@ -126,19 +136,19 @@ namespace Consumer.ConsoleApp
                 var message = Encoding.UTF8.GetString(ea.Body.Span);
                 Console.WriteLine(" Message Received: " + message);
                 
-                //await httpClient.GetAsync("/dummier");
+                await httpClient.GetAsync("/dummier");
                 rabbitMqChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
 
 
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"There was an error: {ex.ToString()} ");
                 if (span != null)
                 {
                     span.SetAttribute("error", true);
                     span.Status = Status.Internal.WithDescription(ex.ToString());
                 }
-                throw;
             }
             finally
             {
