@@ -2,14 +2,13 @@
 using System.Diagnostics;
 using System.Net.Http;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Publisher.WebApi.Controllers
+namespace App1.WebApi.Controllers
 {
     [ApiController]
-    [Route("call")]
+    [Route("http/app2")]
     public class CallApiController : ControllerBase
     {
         private readonly IHttpClientFactory _httpClientFactory;

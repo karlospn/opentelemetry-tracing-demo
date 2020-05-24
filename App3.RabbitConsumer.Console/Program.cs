@@ -6,8 +6,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using OpenTelemetry.Exporter.Jaeger;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Trace.Configuration;
@@ -15,7 +13,7 @@ using OpenTelemetry.Trace.Samplers;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Consumer.ConsoleApp
+namespace App3.RabbitConsumer.Console
 {
     public class Program
     { 
@@ -59,7 +57,7 @@ namespace Consumer.ConsoleApp
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                System.Console.WriteLine(e);
                 throw;
             }
            
@@ -103,8 +101,8 @@ namespace Consumer.ConsoleApp
                 autoAck: false,
                 consumer: consumer);
 
-            Console.WriteLine(" Press [enter] to exit.");
-            Console.ReadLine();
+            System.Console.WriteLine(" Press [enter] to exit.");
+            System.Console.ReadLine();
         }
 
         private static async Task ProcessMessage(BasicDeliverEventArgs ea, 
@@ -134,16 +132,16 @@ namespace Consumer.ConsoleApp
 
 
                 var message = Encoding.UTF8.GetString(ea.Body.Span);
-                Console.WriteLine(" Message Received: " + message);
+                System.Console.WriteLine(" Message Received: " + message);
                 
-                await httpClient.GetAsync("/dummier");
+                await httpClient.GetAsync("/sql/save");
                 rabbitMqChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
 
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"There was an error: {ex.ToString()} ");
+                System.Console.WriteLine($"There was an error: {ex.ToString()} ");
                 if (span != null)
                 {
                     span.SetAttribute("error", true);

@@ -11,7 +11,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace.Configuration;
 using OpenTelemetry.Trace.Samplers;
 
-namespace Invoke.WebApi
+namespace App2.WebApi
 {
     public class Startup
     {

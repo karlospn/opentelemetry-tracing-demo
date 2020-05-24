@@ -4,7 +4,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Invoke.WebApi.Controllers
+namespace App2.WebApi.Controllers
 {
     [ApiController]
     [Route("dummy")]
@@ -14,9 +14,7 @@ namespace Invoke.WebApi.Controllers
        
 
         public DummyController(
-            ILogger<DummyController> logger,
-            IServiceProvider serviceProvider
-            )
+            ILogger<DummyController> logger)
         {
             _logger = logger;
 
@@ -26,7 +24,6 @@ namespace Invoke.WebApi.Controllers
         public string Get()
         {
             Console.WriteLine(JsonSerializer.Serialize(Activity.Current));
-
             return "You call a dummy endpoint";
         }
     }

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using OpenTelemetry.Adapter;
 using OpenTelemetry.Trace;
 
-namespace Publisher.WebApi
+namespace App1.WebApi
 {
     public class RabbitAdapter : IDisposable
     {

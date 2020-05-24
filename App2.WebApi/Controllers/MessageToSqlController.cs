@@ -1,11 +1,11 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Invoke.WebApi.Controllers
+namespace App2.WebApi.Controllers
 {
     [ApiController]
-    [Route("dummier")]
-    public class AnotherDummyController : ControllerBase
+    [Route("sql/save")]
+    public class MessageToSqlController : ControllerBase
     {
 
         [HttpGet]

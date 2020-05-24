@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using OpenTelemetry.Trace;
 using RabbitMQ.Client;
 
-namespace Publisher.WebApi.Controllers
+namespace App1.WebApi.Controllers
 {
     [ApiController]
-    [Route("publish")]
+    [Route("rabbit/app3")]
     public class PublishMessageController : ControllerBase
     {
         private static readonly DiagnosticSource diagnosticSource = new DiagnosticListener("RabbitMq.Publish");

@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Invoke.WebApi
+namespace App2.WebApi
 {
     public class Program
     {
