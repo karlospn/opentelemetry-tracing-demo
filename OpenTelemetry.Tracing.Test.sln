@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Publisher.WebApi", "Publisher.WebApi\Publisher.WebApi.csproj", "{BE8536EF-3C9F-4719-94B9-860672867DB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App1.WebApi", "App1.WebApi\App1.WebApi.csproj", "{BE8536EF-3C9F-4719-94B9-860672867DB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Consumer.ConsoleApp", "Consumer.ConsoleApp\Consumer.ConsoleApp.csproj", "{81778BF9-1771-4D90-AEF3-ED27CC20B80E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App3.RabbitConsumer.Console", "App3.RabbitConsumer.Console\App3.RabbitConsumer.Console.csproj", "{81778BF9-1771-4D90-AEF3-ED27CC20B80E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Invoke.WebApi", "Invoke.WebApi\Invoke.WebApi.csproj", "{19C5123C-2CF3-4760-B034-B9B823288B40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App2.WebApi", "App2.WebApi\App2.WebApi.csproj", "{19C5123C-2CF3-4760-B034-B9B823288B40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
