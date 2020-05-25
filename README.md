@@ -19,6 +19,7 @@ The repository contains the following applications:
 - **App3.RabbitConsumer.ConsoleApp** is a .NET Core 3.1 console application. It reads the messages from Rabbitmq "sample" queue and makes and Http call to App2.WebApi "/sql/save" endpoint with the content of the message.
 
 - **App4.RabbitConsumer.HostedService** is a .NET Core 3.1 console application with a HostedService. First of all it creates a rabbitMq queue named "MessagePersistedEvent" and binds it with the "MessagePersistentEvent" exchange. After that it processes the messages from the queue.
+App4 is still pending to be developed.
 
     
 # Requirements
