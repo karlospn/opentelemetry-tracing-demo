@@ -33,14 +33,16 @@ namespace App2.WebApi.Repository
 
                 props.Headers.Add("traceparent", Activity.Current.Id);
 
-                channel.ExchangeDeclare(exchange: evt.GetType().ToString(), 
-                    type: ExchangeType.Fanout);
+                channel.QueueDeclare(queue: "sample_2",
+                    durable: false,
+                    exclusive: false,
+                    autoDelete: false,
+                    arguments: null);
 
-            
                 var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(evt));
 
-                channel.BasicPublish(exchange: evt.GetType().ToString(),
-                    routingKey: "" ,
+                channel.BasicPublish(exchange: "",
+                    routingKey: "sample_2",
                     basicProperties: props,
                     body: body);
             }

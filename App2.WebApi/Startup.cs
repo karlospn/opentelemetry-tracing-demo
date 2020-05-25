@@ -41,6 +41,7 @@ namespace App2.WebApi
                 builder
                     .AddRequestAdapter()
                     .AddDependencyAdapter()
+                    .AddAdapter(t => new RabbitAdapter(t))
                     .SetResource(new Resource(new Dictionary<string, object>
                     {
                         { "service.name", name }
