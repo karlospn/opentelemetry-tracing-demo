@@ -35,6 +35,8 @@ You can use docker:
 - docker run -d --hostname my-rabbit --name some-rabbit -p 8082:15672 -p 5672:5672 rabbitmq:3.6.15-management
 - docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Pass@Word1" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
 
+Or use the docker-compose in the repository
+
 # Output
 
 If you open jaeger you are going to see something like this
