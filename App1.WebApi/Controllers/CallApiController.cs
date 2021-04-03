@@ -8,11 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace App1.WebApi.Controllers
 {
     [ApiController]
-    [Route("http/app2")]
+    [Route("http")]
     public class CallApiController : ControllerBase
     {
         private readonly IHttpClientFactory _httpClientFactory;
-
 
         public CallApiController(
             IHttpClientFactory httpClientFactory)
@@ -20,7 +19,6 @@ namespace App1.WebApi.Controllers
             _httpClientFactory = httpClientFactory;
             
         }
-
 
         [HttpGet]
         public async Task<string> Get()

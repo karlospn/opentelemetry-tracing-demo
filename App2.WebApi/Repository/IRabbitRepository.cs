@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using App2.WebApi.Events;
 
 namespace App2.WebApi.Repository
 {

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using App2.WebApi.Events;
 using App2.WebApi.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App2.WebApi.Controllers
 {
     [ApiController]
-    [Route("sql/save")]
+    [Route("sql/event")]
     public class MessageToSqlController : ControllerBase
     {
         private readonly ISqlRepository _repository;

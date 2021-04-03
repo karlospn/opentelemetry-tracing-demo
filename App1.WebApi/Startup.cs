@@ -6,10 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using OpenTelemetry.Exporter.Jaeger;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
-using OpenTelemetry.Trace.Configuration;
-using OpenTelemetry.Trace.Samplers;
+using OpenTelemetry.Trace;
+
 
 namespace App1.WebApi
 {
@@ -27,35 +27,21 @@ namespace App1.WebApi
         {
             services.AddControllers();
             services.AddHttpClient();
-            services.AddOpenTelemetry((sp, builder) =>
+            services.Configure<JaegerExporterOptions>(this.Configuration.GetSection("Jaeger"));
+            services.AddOpenTelemetryTracing((sp, builder) =>
             {
-                var jaegerOptions = sp.GetService<IOptions<JaegerExporterOptions>>();
                 var name = Assembly.GetEntryAssembly()?
                     .GetName()
                     .ToString()
                     .ToLowerInvariant();
 
                 
-                builder
-                    .AddRequestAdapter()
-                    .AddDependencyAdapter()
-                    .AddAdapter(t => new RabbitAdapter(t))
-                    .SetResource(new Resource(new Dictionary<string, object>
-                    {
-                        { "service.name", name },
-                        { "Description", "publisher api" }
-                    }))
-                    .SetSampler(new AlwaysOnSampler())
-                    .UseJaeger(o =>
-                    {
-                        o.ServiceName = name;
-                        o.AgentHost = jaegerOptions.Value.AgentHost;
-                        o.AgentPort = jaegerOptions.Value.AgentPort;
-                        o.MaxPacketSize = jaegerOptions.Value.MaxPacketSize;
-                        o.ProcessTags = jaegerOptions.Value.ProcessTags;
-
-                    });
-                });
+                builder.AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddSource(name)
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App1"))
+                    .AddJaegerExporter();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

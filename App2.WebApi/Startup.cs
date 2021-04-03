@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Reflection;
 using App2.WebApi.Repository;
 using Microsoft.AspNetCore.Builder;
@@ -6,11 +5,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using OpenTelemetry.Exporter.Jaeger;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
-using OpenTelemetry.Trace.Configuration;
-using OpenTelemetry.Trace.Samplers;
+using OpenTelemetry.Trace;
 
 namespace App2.WebApi
 {
@@ -30,32 +27,19 @@ namespace App2.WebApi
             services.AddTransient<IRabbitRepository, RabbitRepository>();
 
             services.AddControllers();
-            services.AddOpenTelemetry((sp, builder) =>
+            services.Configure<JaegerExporterOptions>(this.Configuration.GetSection("Jaeger"));
+            services.AddOpenTelemetryTracing((sp, builder) =>
             {
-                var jaegerOptions = sp.GetService<IOptions<JaegerExporterOptions>>();
                 var name = Assembly.GetEntryAssembly()?
                     .GetName()
                     .ToString()
                     .ToLowerInvariant();
 
-                builder
-                    .AddRequestAdapter()
-                    .AddDependencyAdapter()
-                    .AddAdapter(t => new RabbitAdapter(t))
-                    .SetResource(new Resource(new Dictionary<string, object>
-                    {
-                        { "service.name", name }
-                    }))
-                    .SetSampler(new AlwaysOnSampler())
-                    .UseJaeger(o =>
-                    {
-                        o.ServiceName = name;
-                        o.AgentHost = jaegerOptions.Value.AgentHost;
-                        o.AgentPort = jaegerOptions.Value.AgentPort;
-                        o.MaxPacketSize = jaegerOptions.Value.MaxPacketSize;
-                        o.ProcessTags = jaegerOptions.Value.ProcessTags;
-
-                    });
+                builder.AddAspNetCoreInstrumentation()
+                    .AddSource(name)
+                    .AddSqlClientInstrumentation()
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App2"))
+                    .AddJaegerExporter();
             });
 
 
