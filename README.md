@@ -5,20 +5,20 @@ These repository contains an example about how to use opentelemetry for tracing 
 
 The repository contains the following applications:
 
-![Alt Text](https://github.com/karlospn/opentelemetry-tracing-demo/blob/master/docs/diagram.jpg)
+![Alt Text](https://github.com/karlospn/opentelemetry-tracing-demo/blob/master/docs/components-diagram.png)
 
 
-- **App1.WebApi** is a .NET Core 3.1 WebApi with 2 endpoints
-    - /http/app2 : makes a http call to App2 "dummy" endpoint
-    - /rabbit/app3 : publishes a message inside a RabbitMq queue named "sample"
+- **App1.WebApi** is a .NET5 WebApi with 2 endpoints
+    - /http : makes a http call to App2 "dummy" endpoint
+    - /publish-message : publishes a message inside a RabbitMq queue named "sample"
     
-- **App2.WebApi** is a .NET Core 3.1 WebApi with 2 endpoints
-    - /dummy : returns a "dummy" string
-    - /sql/save : receives a message and stores it inside an SQL. After the message is stored, it publishes a MessagePersisted event into a RabbitMq exchange named "MessagePersistedEvent".
+- **App2.WebApi** is a .NET5 WebApi with 2 endpoints
+    - /dummy : returns a dummy "Ok" string
+    - /sql-to-event : receives a message and stores it inside an SQL. After the message is stored, it publishes a MessagePersisted event into a RabbitMq exchange named "MessagePersistedEvent".
 
-- **App3.RabbitConsumer.ConsoleApp** is a .NET Core 3.1 console application. It reads the messages from Rabbitmq "sample" queue and makes and Http call to App2.WebApi "/sql/save" endpoint with the content of the message.
+- **App3.RabbitConsumer.Console** is a .NET5 console application. It reads the messages from Rabbitmq "sample" queue and makes and Http call to App2.WebApi "/sql-to-event" endpoint with the content of the message.
 
-- **App4.RabbitConsumer.HostedService** is a .NET Core 3.1 console application with a HostedService. It reads the messages from Rabbitmq "sample_2" queue and writes the result in the console
+- **App4.RabbitConsumer.HostedService** is a .NET5 console application with a HostedService. It reads the messages from Rabbitmq "sample_2" queue and writes the result in the console
 
     
 # Requirements
@@ -41,4 +41,4 @@ Or use the docker-compose in the repository
 
 If you open jaeger you are going to see something like this
 
-![Alt Text](https://github.com/karlospn/opentelemetry-tracing-demo/blob/master/docs/jaeger.JPG)
+![Alt Text](https://github.com/karlospn/opentelemetry-tracing-demo/blob/master/docs/jaeger.png)

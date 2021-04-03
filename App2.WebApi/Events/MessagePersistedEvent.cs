@@ -1,4 +1,4 @@
-﻿namespace App2.WebApi.Repository
+﻿namespace App2.WebApi.Events
 {
     public class MessagePersistedEvent : IEvent
     {

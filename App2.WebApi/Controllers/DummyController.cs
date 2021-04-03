@@ -23,8 +23,8 @@ namespace App2.WebApi.Controllers
         [HttpGet]
         public string Get()
         {
-            Console.WriteLine(JsonSerializer.Serialize(Activity.Current));
-            return "You call a dummy endpoint";
+            _logger.LogDebug($"Logging current activity: {JsonSerializer.Serialize(Activity.Current)}");
+            return "Ok";
         }
     }
 }
