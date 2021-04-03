@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace App2.WebApi.Controllers
 {
     [ApiController]
-    [Route("sql/event")]
+    [Route("sql-to-event")]
     public class MessageToSqlController : ControllerBase
     {
         private readonly ISqlRepository _repository;

@@ -96,7 +96,7 @@ namespace App3.RabbitConsumer.Console
 
                     System.Console.WriteLine("Message Received: " + message);
 
-                    _ = await httpClient.PostAsync("/sql/event",
+                    _ = await httpClient.PostAsync("/sql-to-event",
                         new StringContent(JsonSerializer.Serialize(message),
                             Encoding.UTF8,
                             "application/json"));
