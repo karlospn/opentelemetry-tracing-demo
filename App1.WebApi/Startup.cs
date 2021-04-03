@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using App1.WebApi.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -30,15 +31,9 @@ namespace App1.WebApi
             services.Configure<JaegerExporterOptions>(this.Configuration.GetSection("Jaeger"));
             services.AddOpenTelemetryTracing((sp, builder) =>
             {
-                var name = Assembly.GetEntryAssembly()?
-                    .GetName()
-                    .ToString()
-                    .ToLowerInvariant();
-
-                
                 builder.AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
-                    .AddSource(name)
+                    .AddSource(nameof(PublishMessageController))
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App1"))
                     .AddJaegerExporter();
             });

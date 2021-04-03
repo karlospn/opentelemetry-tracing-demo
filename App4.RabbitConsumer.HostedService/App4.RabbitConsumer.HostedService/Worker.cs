@@ -71,8 +71,11 @@ namespace App4.RabbitConsumer.HostedService
 
                 using (var activity = Activity.StartActivity("Process Message", ActivityKind.Consumer, parentContext.ActivityContext))
                 {
-                    var message = Encoding.UTF8.GetString(ea.Body.Span);
+                    var body = ea.Body.ToArray();
+                    var message = Encoding.UTF8.GetString(body);
+
                     ActivityHelper.AddActivityTags(activity);
+
                     System.Console.WriteLine("Message Received: " + message);
                     //Do something here with the message if you want
                 }

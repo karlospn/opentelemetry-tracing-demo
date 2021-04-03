@@ -25,15 +25,10 @@ namespace App3.RabbitConsumer.Console
         {
             try
             {
-                var name = Assembly.GetEntryAssembly()?
-                    .GetName()
-                    .ToString()
-                    .ToLowerInvariant();
-
                 using var openTelemetry = Sdk.CreateTracerProviderBuilder()
                     .AddHttpClientInstrumentation()
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App3"))
-                    .AddSource(name)
+                    .AddSource(nameof(Program))
                     .AddJaegerExporter(o =>
                     {
                         o.AgentHost = "localhost";

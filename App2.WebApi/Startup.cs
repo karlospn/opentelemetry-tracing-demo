@@ -30,13 +30,8 @@ namespace App2.WebApi
             services.Configure<JaegerExporterOptions>(this.Configuration.GetSection("Jaeger"));
             services.AddOpenTelemetryTracing((sp, builder) =>
             {
-                var name = Assembly.GetEntryAssembly()?
-                    .GetName()
-                    .ToString()
-                    .ToLowerInvariant();
-
                 builder.AddAspNetCoreInstrumentation()
-                    .AddSource(name)
+                    .AddSource(nameof(RabbitRepository))
                     .AddSqlClientInstrumentation()
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App2"))
                     .AddJaegerExporter();
