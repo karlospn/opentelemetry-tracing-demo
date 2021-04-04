@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using App2.WebApi.Events;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OpenTelemetry;
@@ -18,10 +19,14 @@ namespace App2.WebApi.Repository
         private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
         
         private readonly ILogger<RabbitRepository> _logger;
+        private readonly IConfiguration _configuration;
 
-        public RabbitRepository(ILogger<RabbitRepository> logger)
+        public RabbitRepository(
+            ILogger<RabbitRepository> logger, 
+            IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         public void Publish(IEvent evt)
@@ -30,7 +35,7 @@ namespace App2.WebApi.Repository
             {
                 using (var activity = Activity.StartActivity("RabbitMq Publish", ActivityKind.Producer))
                 {
-                    var factory = new ConnectionFactory { HostName = "localhost" };
+                    var factory = new ConnectionFactory { HostName = _configuration["RabbitMq:Host"] };
                     using (var connection = factory.CreateConnection())
                     using (var channel = connection.CreateModel())
                     {
@@ -66,8 +71,7 @@ namespace App2.WebApi.Repository
             Propagator.Inject(new PropagationContext(activity.Context, Baggage.Current), props, InjectContextIntoHeader);
             activity?.SetTag("messaging.system", "rabbitmq");
             activity?.SetTag("messaging.destination_kind", "queue");
-            activity?.SetTag("messaging.destination", "sample_2");
-            activity?.SetTag("messaging.rabbitmq.routing_key", "sample_2");
+            activity?.SetTag("messaging.rabbitmq.queue", "sample_2");
         }
 
         private void InjectContextIntoHeader(IBasicProperties props, string key, string value)

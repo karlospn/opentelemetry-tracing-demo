@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
@@ -18,10 +19,14 @@ namespace App1.WebApi.Controllers
         private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
 
         private readonly ILogger<PublishMessageController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public PublishMessageController(ILogger<PublishMessageController> logger)
+        public PublishMessageController(
+            ILogger<PublishMessageController> logger,
+            IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -31,7 +36,7 @@ namespace App1.WebApi.Controllers
             {
                 using (var activity = Activity.StartActivity("RabbitMq Publish", ActivityKind.Producer))
                 {
-                    var factory = new ConnectionFactory { HostName = "localhost" };
+                    var factory = new ConnectionFactory { HostName = _configuration["RabbitMq:Host"] };
                     using (var connection = factory.CreateConnection())
                     using (var channel = connection.CreateModel())
                     {
@@ -66,8 +71,7 @@ namespace App1.WebApi.Controllers
             Propagator.Inject(new PropagationContext(activity.Context, Baggage.Current), props, InjectContextIntoHeader);
             activity?.SetTag("messaging.system", "rabbitmq");
             activity?.SetTag("messaging.destination_kind", "queue");
-            activity?.SetTag("messaging.destination", "sample");
-            activity?.SetTag("messaging.rabbitmq.routing_key", "sample");
+            activity?.SetTag("messaging.rabbitmq.queue", "sample");
         }
 
         private void InjectContextIntoHeader(IBasicProperties props, string key, string value)

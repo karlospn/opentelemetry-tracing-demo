@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 using OpenTelemetry.Resources;
@@ -21,22 +23,21 @@ namespace App3.RabbitConsumer.Console
         private static readonly ActivitySource Activity = new(nameof(Program));
         private static readonly TextMapPropagator Propagator = new TraceContextPropagator();
 
+        private static IConfiguration _configuration;
+        private static ILogger<Program> _logger;
+
         public static void Main()
         {
             try
             {
-                using var openTelemetry = Sdk.CreateTracerProviderBuilder()
-                    .AddHttpClientInstrumentation()
-                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App3"))
-                    .AddSource(nameof(Program))
-                    .AddJaegerExporter(o =>
-                    {
-                        o.AgentHost = "localhost";
-                        o.AgentPort = 6831;
-                    })
-                    .Build();
 
+                SetupConfiguration();
+                SetupLogger();
+                using var openTelemetry = SetupOpenTelemetry();
                 DoWork();
+
+                System.Console.WriteLine(" Press [enter] to exit.");
+                System.Console.ReadLine();
 
             }
             catch (Exception e)
@@ -47,13 +48,13 @@ namespace App3.RabbitConsumer.Console
            
         }
 
-        private static void DoWork()
+        public static void DoWork()
         {
-            var factory = new ConnectionFactory() { HostName = "localhost", DispatchConsumersAsync = true};
+            var factory = new ConnectionFactory() { HostName = _configuration["RabbitMq:Host"], DispatchConsumersAsync = true };
 
             var rabbitMqConnection = factory.CreateConnection();
             var rabbitMqChannel = rabbitMqConnection.CreateModel();
-            var httpClient = new HttpClient {BaseAddress = new Uri("http://localhost:5001")};
+            var httpClient = new HttpClient { BaseAddress = new Uri(_configuration["App2UriEndpoint"]) };
 
             rabbitMqChannel.QueueDeclare(queue: "sample",
                 durable: false,
@@ -70,17 +71,15 @@ namespace App3.RabbitConsumer.Console
                     httpClient,
                     rabbitMqChannel);
             };
-            
+
             rabbitMqChannel.BasicConsume(queue: "sample",
                 autoAck: false,
                 consumer: consumer);
 
-            System.Console.WriteLine(" Press [enter] to exit.");
-            System.Console.ReadLine();
         }
 
-        private static async Task ProcessMessage(BasicDeliverEventArgs ea, 
-            HttpClient httpClient, 
+        private static async Task ProcessMessage(BasicDeliverEventArgs ea,
+            HttpClient httpClient,
             IModel rabbitMqChannel)
         {
             try
@@ -95,7 +94,7 @@ namespace App3.RabbitConsumer.Console
                     var message = Encoding.UTF8.GetString(body);
                     AddActivityTags(activity);
 
-                    System.Console.WriteLine("Message Received: " + message);
+                    _logger.LogInformation("Message Received: " + message);
 
                     _ = await httpClient.PostAsync("/sql-to-event",
                         new StringContent(JsonSerializer.Serialize(message),
@@ -108,7 +107,7 @@ namespace App3.RabbitConsumer.Console
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine($"There was an error processing the message: {ex} ");
+                _logger.LogError($"There was an error processing the message: {ex} ");
             }
         }
 
@@ -125,7 +124,7 @@ namespace App3.RabbitConsumer.Console
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine($"Failed to extract trace context: {ex}");
+                _logger.LogError($"Failed to extract trace context: {ex}");
             }
 
             return Enumerable.Empty<string>();
@@ -137,5 +136,54 @@ namespace App3.RabbitConsumer.Console
             activity?.SetTag("messaging.destination_kind", "queue");
             activity?.SetTag("messaging.rabbitmq.queue", "sample");
         }
+
+
+        private static void SetupConfiguration()
+        {
+
+            //setup config
+            var configFiles = Directory
+                .GetFiles(Path.Combine(Directory.GetCurrentDirectory()),
+                    "appsettings.json").ToList();
+
+            if (!configFiles.Any())
+                throw new Exception("Cannot read config file");
+
+            _configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddEnvironmentVariables()
+                .AddJsonFile(configFiles[0], true, false)
+                .Build();
+        }
+
+        private static void SetupLogger()
+        {
+            using var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder
+                    .AddFilter("Microsoft", LogLevel.Warning)
+                    .AddFilter("System", LogLevel.Warning)
+                    .AddFilter("LoggingConsoleApp.Program", LogLevel.Debug)
+                    .AddConsole();
+            });
+
+            _logger = loggerFactory.CreateLogger<Program>();
+        }
+
+        private static TracerProvider SetupOpenTelemetry()
+        {
+            return Sdk.CreateTracerProviderBuilder()
+                .AddHttpClientInstrumentation()
+                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App3"))
+                .AddSource(nameof(Program))
+                .AddJaegerExporter(o =>
+                {
+                    o.AgentHost = "localhost";
+                    o.AgentPort = 6831;
+                })
+                .Build();
+        }
+
     }
 }
+

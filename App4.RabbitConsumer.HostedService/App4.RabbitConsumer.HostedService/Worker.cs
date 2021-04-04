@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 using RabbitMQ.Client;
@@ -20,13 +21,16 @@ namespace App4.RabbitConsumer.HostedService
 
         private readonly ILogger<Worker> _logger;
         private readonly IDistributedCache _cache;
+        private readonly IConfiguration _configuration;
 
 
         public Worker(ILogger<Worker> logger, 
-            IDistributedCache cache)
+            IDistributedCache cache,
+            IConfiguration configuration)
         {
             _logger = logger;
             _cache = cache;
+            _configuration = configuration;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -39,7 +43,7 @@ namespace App4.RabbitConsumer.HostedService
 
         private void StartRabbitConsumer()
         {
-            var factory = new ConnectionFactory() {HostName = "localhost", DispatchConsumersAsync = true};
+            var factory = new ConnectionFactory() {HostName = _configuration["RabbitMq:Host"], DispatchConsumersAsync = true};
             var rabbitMqConnection = factory.CreateConnection();
             var rabbitMqChannel = rabbitMqConnection.CreateModel();
 
