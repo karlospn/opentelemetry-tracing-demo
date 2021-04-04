@@ -26,7 +26,7 @@ namespace App2.WebApi
             services.AddTransient<ISqlRepository, SqlRepository>();
             services.AddTransient<IRabbitRepository, RabbitRepository>();
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
             services.Configure<JaegerExporterOptions>(this.Configuration.GetSection("Jaeger"));
             services.AddOpenTelemetryTracing((sp, builder) =>
             {

@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using System.Text.Json;
 using App2.WebApi.Events;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 using RabbitMQ.Client;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace App2.WebApi.Repository
 {
@@ -43,7 +44,7 @@ namespace App2.WebApi.Repository
                             autoDelete: false,
                             arguments: null);
 
-                        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(evt));
+                        var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(evt));
 
                         channel.BasicPublish(exchange: "",
                             routingKey: "sample_2",

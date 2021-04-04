@@ -31,8 +31,7 @@ namespace App4.RabbitConsumer.HostedService
         {
             activity?.SetTag("messaging.system", "rabbitmq");
             activity?.SetTag("messaging.destination_kind", "queue");
-            activity?.SetTag("messaging.destination", "sample_2");
-            activity?.SetTag("messaging.rabbitmq.routing_key", "sample_2");
+            activity?.SetTag("messaging.rabbitmq.queue", "sample_2");
         }
 
     }

@@ -91,7 +91,8 @@ namespace App3.RabbitConsumer.Console
                 using (var activity = Activity.StartActivity("Process Message", ActivityKind.Consumer, parentContext.ActivityContext))
                 {
 
-                    var message = Encoding.UTF8.GetString(ea.Body.Span);
+                    var body = ea.Body.ToArray();
+                    var message = Encoding.UTF8.GetString(body);
                     AddActivityTags(activity);
 
                     System.Console.WriteLine("Message Received: " + message);
@@ -134,8 +135,7 @@ namespace App3.RabbitConsumer.Console
         {
             activity?.SetTag("messaging.system", "rabbitmq");
             activity?.SetTag("messaging.destination_kind", "queue");
-            activity?.SetTag("messaging.destination", "sample");
-            activity?.SetTag("messaging.rabbitmq.routing_key", "sample");
+            activity?.SetTag("messaging.rabbitmq.queue", "sample");
         }
     }
 }

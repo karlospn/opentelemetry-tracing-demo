@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -12,6 +12,8 @@
     <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.1.0-beta1" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc3" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc3" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.0.0-rc3" />
     <PackageReference Include="RabbitMQ.Client" Version="6.2.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
   </ItemGroup>
 </Project>

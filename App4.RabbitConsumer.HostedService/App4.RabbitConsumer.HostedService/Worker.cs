@@ -1,14 +1,11 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
 using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Distributed;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 using RabbitMQ.Client;
@@ -22,10 +19,14 @@ namespace App4.RabbitConsumer.HostedService
         private static readonly TextMapPropagator Propagator = new TraceContextPropagator();
 
         private readonly ILogger<Worker> _logger;
+        private readonly IDistributedCache _cache;
 
-        public Worker(ILogger<Worker> logger)
+
+        public Worker(ILogger<Worker> logger, 
+            IDistributedCache cache)
         {
             _logger = logger;
+            _cache = cache;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -38,7 +39,7 @@ namespace App4.RabbitConsumer.HostedService
 
         private void StartRabbitConsumer()
         {
-            var factory = new ConnectionFactory() {HostName = "localhost"};
+            var factory = new ConnectionFactory() {HostName = "localhost", DispatchConsumersAsync = true};
             var rabbitMqConnection = factory.CreateConnection();
             var rabbitMqChannel = rabbitMqConnection.CreateModel();
 
@@ -50,8 +51,8 @@ namespace App4.RabbitConsumer.HostedService
 
             rabbitMqChannel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
 
-            var consumer = new EventingBasicConsumer(rabbitMqChannel);
-            consumer.Received += (model, ea) => ProcessMessage(ea);
+            var consumer = new AsyncEventingBasicConsumer(rabbitMqChannel);
+            consumer.Received += async (model, ea) => await ProcessMessage(ea);
 
 
             rabbitMqChannel.BasicConsume(queue: "sample_2",
@@ -59,7 +60,7 @@ namespace App4.RabbitConsumer.HostedService
                 consumer: consumer);
         }
 
-        private void ProcessMessage(BasicDeliverEventArgs ea)
+        private async Task ProcessMessage(BasicDeliverEventArgs ea)
         {
             try
             {
@@ -76,14 +77,26 @@ namespace App4.RabbitConsumer.HostedService
 
                     ActivityHelper.AddActivityTags(activity);
 
-                    System.Console.WriteLine("Message Received: " + message);
-                    //Do something here with the message if you want
+                    _logger.LogInformation("Message Received: " + message);
+
+                    var item = await _cache.GetStringAsync("rabbit.message");
+                    if (string.IsNullOrEmpty(item))
+                    {
+                        _logger.LogInformation("Add item into redis cache");
+                        
+                        await _cache.SetStringAsync("rabbit.message", 
+                            message, 
+                            new DistributedCacheEntryOptions
+                            {
+                                AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1)
+                            });
+                    }
                 }
 
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine($"There was an error processing the message: {ex} ");
+                _logger.LogError($"There was an error processing the message: {ex} ");
             }
         }
 
