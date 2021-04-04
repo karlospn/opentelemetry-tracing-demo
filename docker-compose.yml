@@ -15,6 +15,11 @@ services:
     ports:
       - 1433
 
+  redis:
+    image: redis:6.2.1
+    ports:
+    - 6379:6379
+    
   jaeger:
     image: jaegertracing/all-in-one
     environment:
