@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "App3.RabbitConsumer.Console": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

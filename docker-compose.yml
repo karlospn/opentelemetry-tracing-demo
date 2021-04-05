@@ -2,9 +2,9 @@ version: '3.4'
 
 services:
   rabbitmq:
-    image: rabbitmq:3.5.6-management
+    image: rabbitmq:3.6.15-management
     ports:
-      - 15672
+      - 15672:15672
       - 5672
 
   sqlserver:
@@ -22,8 +22,6 @@ services:
     
   jaeger:
     image: jaegertracing/all-in-one
-    environment:
-      - COLLECTOR_ZIPKIN_HTTP_PORT=19411
     ports:
     - 5775:5775/udp
     - 6831:6831/udp
@@ -64,12 +62,15 @@ services:
       SqlDbConnString: server=sqlserver;user id=sa;password=Pass@Word1;
   
   app3:
+    stdin_open: true
+    tty: true
     build:
       context: ./App3.RabbitConsumer.Console
     depends_on: 
       - rabbitmq
       - jaeger
       - app2
+    entrypoint: ["./wait.sh", "30", "dotnet", "App3.RabbitConsumer.Console.dll"]
     environment:
       Jaeger__AgentHost: jaeger
       Jaeger__AgentPort: 6831
@@ -83,6 +84,7 @@ services:
       - rabbitmq
       - jaeger
       - redis
+    entrypoint: ["./wait.sh", "30", "dotnet", "App4.RabbitConsumer.HostedService.dll"]
     environment:
       Jaeger__AgentHost: jaeger
       Jaeger__AgentPort: 6831

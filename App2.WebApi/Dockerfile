@@ -1,19 +1,20 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build-env
 WORKDIR /app
-EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
-WORKDIR /src
-COPY ["App2.WebApi/App2.WebApi.csproj", "App2.WebApi/"]
-RUN dotnet restore "App2.WebApi/App2.WebApi.csproj"
-COPY . .
-WORKDIR "/src/App2.WebApi"
-RUN dotnet build "App2.WebApi.csproj" -c Release -o /app/build
+# Set intermediate stage as build
+LABEL stage=app-build
 
-FROM build AS publish
-RUN dotnet publish "App2.WebApi.csproj" -c Release -o /app/publish
+# Copy csproj and restore dependencies
+COPY App2.WebApi.csproj ./src/
+RUN dotnet restore "./src/App2.WebApi.csproj"
 
-FROM base AS final
+# Copy everything, build and publish
+COPY . ./src/
+RUN dotnet publish src/*.csproj -c Release -o /app/publish
+
+
+# Build runtime imagedock
+FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build-env /app/publish .
 ENTRYPOINT ["dotnet", "App2.WebApi.dll"]

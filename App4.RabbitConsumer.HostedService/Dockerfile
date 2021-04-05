@@ -5,8 +5,8 @@ WORKDIR /app
 LABEL stage=app-build
 
 # Copy csproj and restore dependencies
-COPY App1.WebApi.csproj ./src/
-RUN dotnet restore "./src/App1.WebApi.csproj"
+COPY App4.RabbitConsumer.HostedService.csproj ./src/
+RUN dotnet restore "./src/App4.RabbitConsumer.HostedService.csproj"
 
 # Copy everything, build and publish
 COPY . ./src/
@@ -17,4 +17,6 @@ RUN dotnet publish src/*.csproj -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim
 WORKDIR /app
 COPY --from=build-env /app/publish .
-ENTRYPOINT ["dotnet", "App1.WebApi.dll"]
+COPY wait.sh .
+RUN chmod +x wait.sh
+ENTRYPOINT ["dotnet", "App4.RabbitConsumer.HostedService.dll"]

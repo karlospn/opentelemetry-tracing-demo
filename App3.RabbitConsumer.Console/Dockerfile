@@ -1,18 +1,22 @@
-FROM mcr.microsoft.com/dotnet/runtime:5.0 AS base
+FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build-env
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
-WORKDIR /src
-COPY ["App3.RabbitConsumer.Console/App3.RabbitConsumer.Console.csproj", "App3.RabbitConsumer.Console/"]
-RUN dotnet restore "App3.RabbitConsumer.Console/App3.RabbitConsumer.Console.csproj"
-COPY . .
-WORKDIR "/src/App3.RabbitConsumer.Console"
-RUN dotnet build "App3.RabbitConsumer.Console.csproj" -c Release -o /app/build
+# Set intermediate stage as build
+LABEL stage=app-build
 
-FROM build AS publish
-RUN dotnet publish "App3.RabbitConsumer.Console.csproj" -c Release -o /app/publish
+# Copy csproj and restore dependencies
+COPY App3.RabbitConsumer.Console.csproj ./src/
+RUN dotnet restore "./src/App3.RabbitConsumer.Console.csproj"
 
-FROM base AS final
+# Copy everything, build and publish
+COPY . ./src/
+RUN dotnet publish src/*.csproj -c Release -o /app/publish
+
+
+# Build runtime imagedock
+FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build-env /app/publish .
+COPY wait.sh .
+RUN chmod +x wait.sh
 ENTRYPOINT ["dotnet", "App3.RabbitConsumer.Console.dll"]
