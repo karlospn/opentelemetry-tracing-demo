@@ -13,8 +13,8 @@ The repository contains the following applications:
     - **/publish-message** endpoint : publishes a message into a RabbitMq queue named _"sample"_
     
 - **App2.WebApi** is a .NET5 WebApi with 2 endpoints
-    - **/dummy** : returns a fixed "Ok" response.
-    - **/sql-to-event** : receives a message and stores it inside an SQL Server. After the message is stored, it publishes a MessagePersisted event into a RabbitMq queue named _"sample_2"_.
+    - **/dummy** endpoint : returns a fixed "Ok" response.
+    - **/sql-to-event** endpoint : receives a message and stores it inside an SQL Server. After the message is stored, it publishes an event into a RabbitMq queue named _"sample_2"_.
 
 - **App3.RabbitConsumer.Console** is a .NET5 console application. 
   - Reads the messages from the Rabbitmq _"sample"_ queue and makes and Http call to **App2.WebApi** _"/sql-to-event"_ endpoint with the content of the message.
@@ -23,18 +23,20 @@ The repository contains the following applications:
   - The Hosted Service reads the messages from the Rabbitmq _"sample_2"_ queue and stores it into a Redis cache database.
 
     
-# Requirements
+# External Dependencies
 
 - Jaeger 
 - MSSQL Server
 - RabbitMq
 - Redis Cache
 
-The repository contains  a **docker-compose** file that runs the 4 apps and the external dependencies.   
+
+# How to run the apps
+
+The repository contains  a **docker-compose** file that starts up the 4 apps and also the external dependencies.   
 There is a **little caveat in the docker-compose**: 
 - You can control the order of service startup and shutdown with the depends_on option. However, for startup Compose does not wait until a container is “ready” only until it’s running.    
 That's a problem because both App3 and App4 need to wait for the rabbitMq container to be ready. To avoid this problem the docker-compose is overwriting the "entrypoint" for both apps and executing a shell script that makes both apps sleep 30 seconds before starting up.
-
 
 
 If you don't want to use the compose file you can use docker to start the dependencies manually, you can ran the following commands:
