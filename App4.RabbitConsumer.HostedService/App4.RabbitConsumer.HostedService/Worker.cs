@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using App4.RabbitConsumer.HostedService.Helpers;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using OpenTelemetry;

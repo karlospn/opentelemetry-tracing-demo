@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using RabbitMQ.Client;
 
-namespace App4.RabbitConsumer.HostedService
+namespace App4.RabbitConsumer.HostedService.Helpers
 {
     public static class ActivityHelper
     {

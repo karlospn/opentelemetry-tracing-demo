@@ -151,8 +151,8 @@ namespace App3.RabbitConsumer.Console
 
             _configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddEnvironmentVariables()
                 .AddJsonFile(configFiles[0], true, false)
+                .AddEnvironmentVariables()
                 .Build();
         }
 

@@ -32,3 +32,60 @@ services:
     - 16686:16686
     - 14268:14268
     - 19411:19411
+
+  app1:
+    build:
+      context: ./App1.WebApi
+    ports:
+      - "5000:80"
+    depends_on: 
+      - rabbitmq
+      - jaeger
+      - app2
+    environment:
+      Jaeger__AgentHost: jaeger
+      Jaeger__AgentPort: 6831
+      RabbitMq__Host: rabbitmq
+      App2Endpoint: http://app2/dummy
+
+  app2:
+    build:
+      context: ./App2.WebApi
+    ports:
+      - "5001:80"
+    depends_on: 
+      - rabbitmq
+      - jaeger
+      - sqlserver
+    environment:
+      Jaeger__AgentHost: jaeger
+      Jaeger__AgentPort: 6831
+      RabbitMq__Host: rabbitmq
+      SqlDbConnString: server=sqlserver;user id=sa;password=Pass@Word1;
+  
+  app3:
+    build:
+      context: ./App3.RabbitConsumer.Console
+    depends_on: 
+      - rabbitmq
+      - jaeger
+      - app2
+    environment:
+      Jaeger__AgentHost: jaeger
+      Jaeger__AgentPort: 6831
+      RabbitMq__Host: rabbitmq
+      App2UriEndpoint: http://app2
+
+  app4:
+    build:
+      context: ./App4.RabbitConsumer.HostedService
+    depends_on: 
+      - rabbitmq
+      - jaeger
+      - redis
+    environment:
+      Jaeger__AgentHost: jaeger
+      Jaeger__AgentPort: 6831
+      RabbitMq__Host: rabbitmq
+      Redis__Host: redis
+      Redis__Port: 6379
