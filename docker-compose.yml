@@ -1,11 +1,17 @@
 version: '3.4'
 
+networks:
+  tracing:
+    name: tracing-network
+    
 services:
   rabbitmq:
     image: rabbitmq:3.6.15-management
     ports:
       - 15672:15672
       - 5672
+    networks:
+      - tracing
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
@@ -14,28 +20,38 @@ services:
       - SA_PASSWORD=Pass@Word1
     ports:
       - 1433
+    networks:
+      - tracing
 
   redis:
     image: redis:6.2.1
     ports:
     - 6379:6379
+    networks:
+      - tracing
     
   jaeger:
     image: jaegertracing/all-in-one
+    container_name: jaeger
+    restart: unless-stopped
     ports:
-    - 5775:5775/udp
-    - 6831:6831/udp
-    - 6832:6832/udp
-    - 5778:5778
-    - 16686:16686
-    - 14268:14268
-    - 19411:19411
+      - 5775:5775/udp
+      - 5778:5778
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 9411:9411
+      - 14268:14268
+      - 16686:16686
+    networks:
+      - tracing
 
   app1:
     build:
       context: ./App1.WebApi
     ports:
       - "5000:80"
+    networks:
+      - tracing
     depends_on: 
       - rabbitmq
       - jaeger
@@ -51,6 +67,8 @@ services:
       context: ./App2.WebApi
     ports:
       - "5001:80"
+    networks:
+      - tracing
     depends_on: 
       - rabbitmq
       - jaeger
@@ -66,6 +84,8 @@ services:
     tty: true
     build:
       context: ./App3.RabbitConsumer.Console
+    networks:
+      - tracing
     depends_on: 
       - rabbitmq
       - jaeger
@@ -80,6 +100,8 @@ services:
   app4:
     build:
       context: ./App4.RabbitConsumer.HostedService
+    networks:
+      - tracing
     depends_on: 
       - rabbitmq
       - jaeger
@@ -91,3 +113,5 @@ services:
       RabbitMq__Host: rabbitmq
       Redis__Host: redis
       Redis__Port: 6379
+
+  

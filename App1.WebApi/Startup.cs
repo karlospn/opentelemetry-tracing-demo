@@ -1,10 +1,11 @@
+using System;
 using App1.WebApi.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OpenTelemetry.Exporter;
+using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -25,14 +26,18 @@ namespace App1.WebApi
         {
             services.AddControllers();
             services.AddHttpClient();
-            services.Configure<JaegerExporterOptions>(this.Configuration.GetSection("Jaeger"));
             services.AddOpenTelemetryTracing((sp, builder) =>
             {
                 builder.AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddSource(nameof(PublishMessageController))
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App1"))
-                    .AddJaegerExporter();
+                    .AddJaegerExporter(opts =>
+                    {
+                        opts.AgentHost = Configuration["Jaeger:AgentHost"];
+                        opts.AgentPort = Convert.ToInt32(Configuration["Jaeger:AgentPort"]);
+                        opts.ExportProcessorType = ExportProcessorType.Simple;
+                    });
             });
         }
 

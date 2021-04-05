@@ -176,10 +176,11 @@ namespace App3.RabbitConsumer.Console
                 .AddHttpClientInstrumentation()
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App3"))
                 .AddSource(nameof(Program))
-                .AddJaegerExporter(o =>
+                .AddJaegerExporter(opts =>
                 {
-                    o.AgentHost = "localhost";
-                    o.AgentPort = 6831;
+                    opts.AgentHost = _configuration["Jaeger:AgentHost"];
+                    opts.AgentPort = Convert.ToInt32(_configuration["Jaeger:AgentPort"]);
+                    opts.ExportProcessorType = ExportProcessorType.Simple;
                 })
                 .Build();
         }

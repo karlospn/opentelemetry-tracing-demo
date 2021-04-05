@@ -1,11 +1,11 @@
-using System.Reflection;
+using System;
 using App2.WebApi.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OpenTelemetry.Exporter;
+using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -27,14 +27,18 @@ namespace App2.WebApi
             services.AddTransient<IRabbitRepository, RabbitRepository>();
 
             services.AddControllers().AddNewtonsoftJson();
-            services.Configure<JaegerExporterOptions>(this.Configuration.GetSection("Jaeger"));
             services.AddOpenTelemetryTracing((sp, builder) =>
             {
                 builder.AddAspNetCoreInstrumentation()
                     .AddSource(nameof(RabbitRepository))
                     .AddSqlClientInstrumentation()
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App2"))
-                    .AddJaegerExporter();
+                    .AddJaegerExporter(opts =>
+                    {
+                        opts.AgentHost = Configuration["Jaeger:AgentHost"];
+                        opts.AgentPort = Convert.ToInt32(Configuration["Jaeger:AgentPort"]);
+                        opts.ExportProcessorType = ExportProcessorType.Simple;
+                    });
             });
 
 
