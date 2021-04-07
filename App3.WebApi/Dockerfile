@@ -5,8 +5,8 @@ WORKDIR /app
 LABEL stage=app-build
 
 # Copy csproj and restore dependencies
-COPY App2.WebApi.csproj ./src/
-RUN dotnet restore "./src/App2.WebApi.csproj"
+COPY App3.WebApi.csproj ./src/
+RUN dotnet restore "./src/App3.WebApi.csproj"
 
 # Copy everything, build and publish
 COPY . ./src/
@@ -17,4 +17,4 @@ RUN dotnet publish src/*.csproj -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim
 WORKDIR /app
 COPY --from=build-env /app/publish .
-ENTRYPOINT ["dotnet", "App2.WebApi.dll"]
+ENTRYPOINT ["dotnet", "App3.WebApi.dll"]

@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using App2.WebApi.Events;
-using App2.WebApi.Repository;
+using App3.WebApi.Events;
+using App3.WebApi.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace App2.WebApi.Controllers
+namespace App3.WebApi.Controllers
 {
     [ApiController]
     [Route("sql-to-event")]

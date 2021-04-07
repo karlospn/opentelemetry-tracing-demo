@@ -1,10 +1,9 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace App2.WebApi.Controllers
+namespace App3.WebApi.Controllers
 {
     [ApiController]
     [Route("dummy")]

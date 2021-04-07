@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using App2.WebApi.Events;
+using App3.WebApi.Events;
+using App3.WebApi.Repository;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 using RabbitMQ.Client;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace App2.WebApi.Repository
+namespace App3.WebApi.Repository
 {
     public class RabbitRepository : IRabbitRepository
     {

@@ -1,6 +1,6 @@
-﻿using App2.WebApi.Events;
+﻿using App3.WebApi.Events;
 
-namespace App2.WebApi.Repository
+namespace App3.WebApi.Repository
 {
     public interface IRabbitRepository
     {

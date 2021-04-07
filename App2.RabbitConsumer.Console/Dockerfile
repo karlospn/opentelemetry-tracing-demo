@@ -5,8 +5,8 @@ WORKDIR /app
 LABEL stage=app-build
 
 # Copy csproj and restore dependencies
-COPY App3.RabbitConsumer.Console.csproj ./src/
-RUN dotnet restore "./src/App3.RabbitConsumer.Console.csproj"
+COPY App2.RabbitConsumer.Console.csproj ./src/
+RUN dotnet restore "./src/App2.RabbitConsumer.Console.csproj"
 
 # Copy everything, build and publish
 COPY . ./src/
@@ -19,4 +19,4 @@ WORKDIR /app
 COPY --from=build-env /app/publish .
 COPY wait.sh .
 RUN chmod +x wait.sh
-ENTRYPOINT ["dotnet", "App3.RabbitConsumer.Console.dll"]
+ENTRYPOINT ["dotnet", "App2.RabbitConsumer.Console.dll"]

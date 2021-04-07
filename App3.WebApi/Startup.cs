@@ -1,15 +1,14 @@
 using System;
-using App2.WebApi.Repository;
+using App3.WebApi.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-namespace App2.WebApi
+namespace App3.WebApi
 {
     public class Startup
     {
@@ -32,12 +31,11 @@ namespace App2.WebApi
                 builder.AddAspNetCoreInstrumentation()
                     .AddSource(nameof(RabbitRepository))
                     .AddSqlClientInstrumentation()
-                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App2"))
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App3"))
                     .AddJaegerExporter(opts =>
                     {
                         opts.AgentHost = Configuration["Jaeger:AgentHost"];
                         opts.AgentPort = Convert.ToInt32(Configuration["Jaeger:AgentPort"]);
-                        opts.ExportProcessorType = ExportProcessorType.Simple;
                     });
             });
 

@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App1.WebApi", "App1.WebApi\App1.WebApi.csproj", "{BE8536EF-3C9F-4719-94B9-860672867DB6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App3.RabbitConsumer.Console", "App3.RabbitConsumer.Console\App3.RabbitConsumer.Console.csproj", "{81778BF9-1771-4D90-AEF3-ED27CC20B80E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App2.RabbitConsumer.Console", "App2.RabbitConsumer.Console\App2.RabbitConsumer.Console.csproj", "{81778BF9-1771-4D90-AEF3-ED27CC20B80E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App2.WebApi", "App2.WebApi\App2.WebApi.csproj", "{19C5123C-2CF3-4760-B034-B9B823288B40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App3.WebApi", "App3.WebApi\App3.WebApi.csproj", "{19C5123C-2CF3-4760-B034-B9B823288B40}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App4.RabbitConsumer.HostedService", "App4.RabbitConsumer.HostedService\App4.RabbitConsumer.HostedService.csproj", "{25059BE3-44DA-4FC3-BBB5-228E5CA7D6D8}"
 EndProject

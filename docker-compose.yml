@@ -55,16 +55,35 @@ services:
     depends_on: 
       - rabbitmq
       - jaeger
-      - app2
+      - app3
     environment:
       Jaeger__AgentHost: jaeger
       Jaeger__AgentPort: 6831
       RabbitMq__Host: rabbitmq
-      App2Endpoint: http://app2/dummy
+      App3Endpoint: http://app3/dummy
 
   app2:
+    stdin_open: true
+    tty: true
     build:
-      context: ./App2.WebApi
+      context: ./App2.RabbitConsumer.Console
+    networks:
+      - tracing
+    depends_on: 
+      - rabbitmq
+      - jaeger
+      - app3
+    entrypoint: ["./wait.sh", "30", "dotnet", "App2.RabbitConsumer.Console.dll"]
+    environment:
+      Jaeger__AgentHost: jaeger
+      Jaeger__AgentPort: 6831
+      RabbitMq__Host: rabbitmq
+      App3UriEndpoint: http://app3
+
+
+  app3:
+    build:
+      context: ./App3.WebApi
     ports:
       - "5001:80"
     networks:
@@ -79,23 +98,7 @@ services:
       RabbitMq__Host: rabbitmq
       SqlDbConnString: server=sqlserver;user id=sa;password=Pass@Word1;
   
-  app3:
-    stdin_open: true
-    tty: true
-    build:
-      context: ./App3.RabbitConsumer.Console
-    networks:
-      - tracing
-    depends_on: 
-      - rabbitmq
-      - jaeger
-      - app2
-    entrypoint: ["./wait.sh", "30", "dotnet", "App3.RabbitConsumer.Console.dll"]
-    environment:
-      Jaeger__AgentHost: jaeger
-      Jaeger__AgentPort: 6831
-      RabbitMq__Host: rabbitmq
-      App2UriEndpoint: http://app2
+
 
   app4:
     build:

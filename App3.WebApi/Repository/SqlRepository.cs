@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 
-namespace App2.WebApi.Repository
+namespace App3.WebApi.Repository
 {
     public class SqlRepository : ISqlRepository
     {

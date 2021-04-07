@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace App2.WebApi
+namespace App3.WebApi
 {
     public class Program
     {

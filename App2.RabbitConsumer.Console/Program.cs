@@ -16,7 +16,7 @@ using OpenTelemetry.Trace;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace App3.RabbitConsumer.Console
+namespace App2.RabbitConsumer.Console
 {
     public class Program
     {
@@ -54,7 +54,7 @@ namespace App3.RabbitConsumer.Console
 
             var rabbitMqConnection = factory.CreateConnection();
             var rabbitMqChannel = rabbitMqConnection.CreateModel();
-            var httpClient = new HttpClient { BaseAddress = new Uri(_configuration["App2UriEndpoint"]) };
+            var httpClient = new HttpClient { BaseAddress = new Uri(_configuration["App3UriEndpoint"]) };
 
             rabbitMqChannel.QueueDeclare(queue: "sample",
                 durable: false,
@@ -174,7 +174,7 @@ namespace App3.RabbitConsumer.Console
         {
             return Sdk.CreateTracerProviderBuilder()
                 .AddHttpClientInstrumentation()
-                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App3"))
+                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App2"))
                 .AddSource(nameof(Program))
                 .AddJaegerExporter(opts =>
                 {

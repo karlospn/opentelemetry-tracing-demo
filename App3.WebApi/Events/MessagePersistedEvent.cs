@@ -1,4 +1,4 @@
-﻿namespace App2.WebApi.Events
+﻿namespace App3.WebApi.Events
 {
     public class MessagePersistedEvent : IEvent
     {
