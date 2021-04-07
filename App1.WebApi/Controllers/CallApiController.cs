@@ -27,10 +27,10 @@ namespace App1.WebApi.Controllers
         [HttpGet]
         public async Task<string> Get()
         { 
-            _logger.LogTrace($"Calling App2: {_configuration["App3Endpoint"]}");
+            _logger.LogInformation($"Calling App3: {_configuration["App3Endpoint"]}");
             var response  = await _httpClientFactory
                 .CreateClient()
-                .GetStringAsync(_configuration["App2Endpoint"]);
+                .GetStringAsync(_configuration["App3Endpoint"]);
 
             return response;
 
