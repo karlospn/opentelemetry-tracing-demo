@@ -52,6 +52,8 @@ namespace App1.WebApi.Controllers
 
                         var body = Encoding.UTF8.GetBytes("I am app1");
 
+                        _logger.LogInformation("Publishing message to queue");
+
                         channel.BasicPublish(exchange: "",
                             routingKey: "sample",
                             basicProperties: props,

@@ -50,6 +50,7 @@ namespace App3.WebApi.Repository
                             arguments: null);
 
                         var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(evt));
+                        _logger.LogInformation("Publishing message to queue");
 
                         channel.BasicPublish(exchange: "",
                             routingKey: "sample_2",
