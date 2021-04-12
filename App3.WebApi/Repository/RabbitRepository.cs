@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using App3.WebApi.Events;
-using App3.WebApi.Repository;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
+using OpenTelemetry.Contrib.Extensions.AWSXRay.Trace;
 using RabbitMQ.Client;
 
 namespace App3.WebApi.Repository
@@ -16,7 +16,7 @@ namespace App3.WebApi.Repository
     public class RabbitRepository : IRabbitRepository
     {
         private static readonly ActivitySource Activity = new(nameof(RabbitRepository));
-        private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
+        private static readonly AWSXRayPropagator Propagator = new();
         
         private readonly ILogger<RabbitRepository> _logger;
         private readonly IConfiguration _configuration;

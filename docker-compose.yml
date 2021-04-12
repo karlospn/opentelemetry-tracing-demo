@@ -26,22 +26,21 @@ services:
   redis:
     image: redis:6.2.1
     ports:
-    - 6379:6379
+      - 6379:6379
     networks:
       - tracing
     
-  jaeger:
-    image: jaegertracing/all-in-one
-    container_name: jaeger
-    restart: unless-stopped
+  otel:
+    image: amazon/aws-otel-collector:latest
+    command: --config /config/config-local.yml --log-level debug
+    volumes:
+      - ./aws-otel-collector-config:/config
+    environment:
+      - AWS_ACCESS_KEY_ID=<access-key>
+      - AWS_SECRET_ACCESS_KEY=<secret-key>
+      - AWS_REGION=eu-west-1
     ports:
-      - 5775:5775/udp
-      - 5778:5778
-      - 6831:6831/udp
-      - 6832:6832/udp
-      - 9411:9411
-      - 14268:14268
-      - 16686:16686
+      - '4317:4317'
     networks:
       - tracing
 
@@ -54,13 +53,14 @@ services:
       - tracing
     depends_on: 
       - rabbitmq
-      - jaeger
+      - otel
       - app3
     environment:
-      Jaeger__AgentHost: jaeger
-      Jaeger__AgentPort: 6831
       RabbitMq__Host: rabbitmq
       App3Endpoint: http://app3/dummy
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel:4317
+      OTEL_RESOURCE_ATTRIBUTES: service.name=App1
+
 
   app2:
     stdin_open: true
@@ -71,14 +71,14 @@ services:
       - tracing
     depends_on: 
       - rabbitmq
-      - jaeger
+      - otel
       - app3
     entrypoint: ["./wait.sh", "30", "dotnet", "App2.RabbitConsumer.Console.dll"]
     environment:
-      Jaeger__AgentHost: jaeger
-      Jaeger__AgentPort: 6831
       RabbitMq__Host: rabbitmq
       App3UriEndpoint: http://app3
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel:4317
+      OTEL_RESOURCE_ATTRIBUTES: service.name=App2
 
 
   app3:
@@ -90,13 +90,14 @@ services:
       - tracing
     depends_on: 
       - rabbitmq
-      - jaeger
+      - otel
       - sqlserver
     environment:
-      Jaeger__AgentHost: jaeger
-      Jaeger__AgentPort: 6831
       RabbitMq__Host: rabbitmq
       SqlDbConnString: server=sqlserver;user id=sa;password=Pass@Word1;
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel:4317
+      OTEL_RESOURCE_ATTRIBUTES: service.name=App3
+
   
 
 
@@ -107,14 +108,14 @@ services:
       - tracing
     depends_on: 
       - rabbitmq
-      - jaeger
+      - otel
       - redis
     entrypoint: ["./wait.sh", "30", "dotnet", "App4.RabbitConsumer.HostedService.dll"]
     environment:
-      Jaeger__AgentHost: jaeger
-      Jaeger__AgentPort: 6831
       RabbitMq__Host: rabbitmq
       Redis__Host: redis
       Redis__Port: 6379
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel:4317
+      OTEL_RESOURCE_ATTRIBUTES: service.name=App4
 
   

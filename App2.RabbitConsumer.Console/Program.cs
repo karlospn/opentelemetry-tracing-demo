@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
-using OpenTelemetry.Context.Propagation;
+using OpenTelemetry.Contrib.Extensions.AWSXRay.Trace;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using RabbitMQ.Client;
@@ -21,7 +21,7 @@ namespace App2.RabbitConsumer.Console
     public class Program
     {
         private static readonly ActivitySource Activity = new(nameof(Program));
-        private static readonly TextMapPropagator Propagator = new TraceContextPropagator();
+        private static readonly AWSXRayPropagator Propagator = new();
 
         private static IConfiguration _configuration;
         private static ILogger<Program> _logger;
@@ -174,15 +174,16 @@ namespace App2.RabbitConsumer.Console
         {
             return Sdk.CreateTracerProviderBuilder()
                 .AddHttpClientInstrumentation()
+                .AddXRayTraceId()
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App2"))
                 .AddSource(nameof(Program))
-                .AddJaegerExporter(opts =>
+                .AddOtlpExporter(opts =>
                 {
-                    opts.AgentHost = _configuration["Jaeger:AgentHost"];
-                    opts.AgentPort = Convert.ToInt32(_configuration["Jaeger:AgentPort"]);
-                    opts.ExportProcessorType = ExportProcessorType.Simple;
+                    opts.Endpoint = new Uri(Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT") ??
+                                            "localhost:4317");
                 })
                 .Build();
+
         }
 
     }

@@ -9,7 +9,7 @@ using App4.RabbitConsumer.HostedService.Helpers;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using OpenTelemetry;
-using OpenTelemetry.Context.Propagation;
+using OpenTelemetry.Contrib.Extensions.AWSXRay.Trace;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -18,7 +18,7 @@ namespace App4.RabbitConsumer.HostedService
     public class Worker : BackgroundService
     {
         private static readonly ActivitySource Activity = new(nameof(Worker));
-        private static readonly TextMapPropagator Propagator = new TraceContextPropagator();
+        private static readonly AWSXRayPropagator Propagator = new ();
 
         private readonly ILogger<Worker> _logger;
         private readonly IDistributedCache _cache;

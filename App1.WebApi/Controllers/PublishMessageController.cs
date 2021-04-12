@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
+using OpenTelemetry.Contrib.Extensions.AWSXRay.Trace;
 using RabbitMQ.Client;
 
 namespace App1.WebApi.Controllers
@@ -16,7 +17,8 @@ namespace App1.WebApi.Controllers
     public class PublishMessageController : ControllerBase
     {
         private static readonly ActivitySource Activity = new(nameof(PublishMessageController));
-        private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
+        private static readonly AWSXRayPropagator Propagator = new();
+
 
         private readonly ILogger<PublishMessageController> _logger;
         private readonly IConfiguration _configuration;

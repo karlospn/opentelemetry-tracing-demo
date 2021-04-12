@@ -31,11 +31,12 @@ namespace App3.WebApi
                 builder.AddAspNetCoreInstrumentation()
                     .AddSource(nameof(RabbitRepository))
                     .AddSqlClientInstrumentation()
+                    .AddXRayTraceId()
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App3"))
-                    .AddJaegerExporter(opts =>
+                    .AddOtlpExporter(opts =>
                     {
-                        opts.AgentHost = Configuration["Jaeger:AgentHost"];
-                        opts.AgentPort = Convert.ToInt32(Configuration["Jaeger:AgentPort"]);
+                        opts.Endpoint = new Uri(Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT") ??
+                                                "localhost:4317");
                     });
             });
 

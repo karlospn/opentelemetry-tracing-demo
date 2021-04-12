@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenTelemetry;
+using OpenTelemetry.Contrib.Extensions.AWSXRay.Trace;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -30,13 +31,13 @@ namespace App1.WebApi
             {
                 builder.AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
+                    .AddXRayTraceId()
                     .AddSource(nameof(PublishMessageController))
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App1"))
-                    .AddJaegerExporter(opts =>
+                    .AddOtlpExporter(opts =>
                     {
-                        opts.AgentHost = Configuration["Jaeger:AgentHost"];
-                        opts.AgentPort = Convert.ToInt32(Configuration["Jaeger:AgentPort"]);
-                        opts.ExportProcessorType = ExportProcessorType.Simple;
+                        opts.Endpoint = new Uri(Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT") ?? 
+                                                "localhost:4317");
                     });
             });
         }

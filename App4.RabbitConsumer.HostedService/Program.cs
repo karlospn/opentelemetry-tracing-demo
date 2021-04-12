@@ -35,18 +35,18 @@ namespace App4.RabbitConsumer.HostedService
 
                     services.AddOpenTelemetryTracing((sp, builder) =>
                     {
-                        IConfiguration config = sp.GetRequiredService<IConfiguration>();
                         RedisCache cache = (RedisCache)sp.GetRequiredService<IDistributedCache>();
                         builder.AddAspNetCoreInstrumentation()
                             .AddHttpClientInstrumentation()
+                            .AddXRayTraceId()
                             .AddRedisInstrumentation(cache.GetConnectionAsync())
                             .AddSource(nameof(Worker))
                             .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App4"))
-                            .AddJaegerExporter(opts =>
+                            .AddOtlpExporter(opts =>
                             {
-                                opts.AgentHost = config["Jaeger:AgentHost"];
-                                opts.AgentPort = Convert.ToInt32(config["Jaeger:AgentPort"]);
-                                opts.ExportProcessorType = ExportProcessorType.Simple;
+                                opts.Endpoint = new Uri(
+                                    Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT") ??
+                                    "localhost:4317");
                             });
                     });
 
