@@ -161,9 +161,8 @@ namespace App2.RabbitConsumer.Console
             using var loggerFactory = LoggerFactory.Create(builder =>
             {
                 builder
-                    .AddFilter("Microsoft", LogLevel.Warning)
-                    .AddFilter("System", LogLevel.Warning)
-                    .AddFilter("LoggingConsoleApp.Program", LogLevel.Debug)
+                    .AddFilter("Microsoft", LogLevel.Debug)
+                    .AddFilter("System", LogLevel.Debug)
                     .AddConsole();
             });
 
@@ -172,7 +171,7 @@ namespace App2.RabbitConsumer.Console
 
         private static TracerProvider SetupOpenTelemetry()
         {
-            return Sdk.CreateTracerProviderBuilder()
+            var provider = Sdk.CreateTracerProviderBuilder()
                 .AddHttpClientInstrumentation()
                 .AddXRayTraceId()
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App2"))
@@ -183,6 +182,11 @@ namespace App2.RabbitConsumer.Console
                                             "localhost:4317");
                 })
                 .Build();
+
+            Sdk.SetDefaultTextMapPropagator(new AWSXRayPropagator());
+
+            return provider;
+
 
         }
 

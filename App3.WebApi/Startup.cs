@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OpenTelemetry;
+using OpenTelemetry.Contrib.Extensions.AWSXRay.Trace;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -26,7 +28,7 @@ namespace App3.WebApi
             services.AddTransient<IRabbitRepository, RabbitRepository>();
 
             services.AddControllers().AddNewtonsoftJson();
-            services.AddOpenTelemetryTracing((sp, builder) =>
+            services.AddOpenTelemetryTracing(builder =>
             {
                 builder.AddAspNetCoreInstrumentation()
                     .AddSource(nameof(RabbitRepository))
@@ -40,6 +42,7 @@ namespace App3.WebApi
                     });
             });
 
+            Sdk.SetDefaultTextMapPropagator(new AWSXRayPropagator());
 
         }
 

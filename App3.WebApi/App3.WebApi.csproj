@@ -5,14 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenTelemetry" Version="1.1.0-beta1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc3" />
-    <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.1.0-beta1" />
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc3" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc3" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.0.0-rc3" />
+    <PackageReference Include="OpenTelemetry" Version="1.1.0-beta4" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc5" />
+    <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.1.0-beta4" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc5" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc5" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.0.0-rc5" />
     <PackageReference Include="OpenTelemetry.Contrib.Extensions.AWSXRay" Version="1.0.1" />
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.0.1" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.1.0-beta4" />
     <PackageReference Include="RabbitMQ.Client" Version="6.2.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

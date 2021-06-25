@@ -27,7 +27,7 @@ namespace App1.WebApi
         {
             services.AddControllers();
             services.AddHttpClient();
-            services.AddOpenTelemetryTracing((sp, builder) =>
+            services.AddOpenTelemetryTracing(builder =>
             {
                 builder.AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
@@ -40,6 +40,8 @@ namespace App1.WebApi
                                                 "localhost:4317");
                     });
             });
+
+            Sdk.SetDefaultTextMapPropagator(new AWSXRayPropagator());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
