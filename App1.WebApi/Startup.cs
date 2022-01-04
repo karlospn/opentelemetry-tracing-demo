@@ -26,7 +26,7 @@ namespace App1.WebApi
         {
             services.AddControllers();
             services.AddHttpClient();
-            services.AddOpenTelemetryTracing((sp, builder) =>
+            services.AddOpenTelemetryTracing(builder =>
             {
                 builder.AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()

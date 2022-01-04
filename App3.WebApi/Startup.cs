@@ -26,7 +26,7 @@ namespace App3.WebApi
             services.AddTransient<IRabbitRepository, RabbitRepository>();
 
             services.AddControllers().AddNewtonsoftJson();
-            services.AddOpenTelemetryTracing((sp, builder) =>
+            services.AddOpenTelemetryTracing(builder =>
             {
                 builder.AddAspNetCoreInstrumentation()
                     .AddSource(nameof(RabbitRepository))
