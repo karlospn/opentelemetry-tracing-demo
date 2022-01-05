@@ -36,14 +36,19 @@ namespace App4.RabbitConsumer.HostedService
                         var provider = services.BuildServiceProvider();
                         IConfiguration config = provider
                                 .GetRequiredService<IConfiguration>();
-                        RedisCache cache = (RedisCache)provider.GetRequiredService<IDistributedCache>();
+
                         builder.AddAspNetCoreInstrumentation()
                             .AddHttpClientInstrumentation()
-                            .AddRedisInstrumentation(cache.GetConnection())
+                            .Configure((sp, builder) =>
+                              {
+                                  RedisCache cache = (RedisCache)sp.GetRequiredService<IDistributedCache>();
+                                  builder.AddRedisInstrumentation(cache.GetConnection());
+                              })
                             .AddSource(nameof(Worker))
                             .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App4"))
                             .AddJaegerExporter(opts =>
-                            {
+                            {                    
+                                
                                 opts.AgentHost = config["Jaeger:AgentHost"];
                                 opts.AgentPort = Convert.ToInt32(config["Jaeger:AgentPort"]);
                                 opts.ExportProcessorType = ExportProcessorType.Simple;
