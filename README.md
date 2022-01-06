@@ -22,7 +22,21 @@ The repository contains the following applications:
 - **App4.RabbitConsumer.HostedService** is a .NET5 Worker Service.
   - The Hosted Service reads the messages from the Rabbitmq _"sample_2"_ queue and stores it into a Redis cache database.
 
-    
+
+# OpenTelemetry .NET Client
+
+The apps are using the following OpenTelemetry versions
+
+```xml
+<PackageReference Include="OpenTelemetry" Version="1.2.0-rc1" />
+<PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.2.0-rc1" />
+<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc8" />
+<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc8" />
+<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc8" />
+<PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.0.0-rc8" />
+<PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.0.0-rc8" />
+```
+
 # External Dependencies
 
 - Jaeger 
