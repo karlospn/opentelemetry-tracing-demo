@@ -25,7 +25,7 @@ The repository contains the following applications:
 
 # OpenTelemetry .NET Client
 
-The apps are using the following OpenTelemetry versions
+The apps are using the following package versions:
 
 ```xml
 <PackageReference Include="OpenTelemetry" Version="1.2.0-rc1" />
