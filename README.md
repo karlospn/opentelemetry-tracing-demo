@@ -8,18 +8,18 @@ The repository contains the following applications:
 ![Alt Text](https://github.com/karlospn/opentelemetry-tracing-demo/blob/master/docs/components-diagram.png)
 
 
-- **App1.WebApi** is a .NET5 WebApi with 2 endpoints:
+- **App1.WebApi** is a .NET6 WebApi with 2 endpoints:
     - **/http** endpoint : makes a http call to App2 "dummy" endpoint
     - **/publish-message** endpoint : publishes a message into a RabbitMq queue named _"sample"_
     
-- **App2.WebApi** is a .NET5 WebApi with 2 endpoints
+- **App2.WebApi** is a .NET6 WebApi with 2 endpoints
     - **/dummy** endpoint : returns a fixed "Ok" response.
     - **/sql-to-event** endpoint : receives a message and stores it inside an SQL Server. After the message is stored, it publishes an event into a RabbitMq queue named _"sample_2"_.
 
-- **App3.RabbitConsumer.Console** is a .NET5 console application. 
+- **App3.RabbitConsumer.Console** is a .NET6 console application. 
   - Reads the messages from the Rabbitmq _"sample"_ queue and makes and Http call to **App2.WebApi** _"/sql-to-event"_ endpoint with the content of the message.
 
-- **App4.RabbitConsumer.HostedService** is a .NET5 Worker Service.
+- **App4.RabbitConsumer.HostedService** is a .NET6 Worker Service.
   - The Hosted Service reads the messages from the Rabbitmq _"sample_2"_ queue and stores it into a Redis cache database.
 
 
