@@ -8,21 +8,35 @@ The repository contains the following applications:
 ![Alt Text](https://github.com/karlospn/opentelemetry-tracing-demo/blob/master/docs/components-diagram.png)
 
 
-- **App1.WebApi** is a .NET5 WebApi with 2 endpoints:
+- **App1.WebApi** is a .NET6 WebApi with 2 endpoints:
     - **/http** endpoint : makes a http call to App2 "dummy" endpoint
     - **/publish-message** endpoint : publishes a message into a RabbitMq queue named _"sample"_
     
-- **App2.WebApi** is a .NET5 WebApi with 2 endpoints
+- **App2.WebApi** is a .NET6 WebApi with 2 endpoints
     - **/dummy** endpoint : returns a fixed "Ok" response.
     - **/sql-to-event** endpoint : receives a message and stores it inside an SQL Server. After the message is stored, it publishes an event into a RabbitMq queue named _"sample_2"_.
 
-- **App3.RabbitConsumer.Console** is a .NET5 console application. 
+- **App3.RabbitConsumer.Console** is a .NET6 console application. 
   - Reads the messages from the Rabbitmq _"sample"_ queue and makes and Http call to **App2.WebApi** _"/sql-to-event"_ endpoint with the content of the message.
 
-- **App4.RabbitConsumer.HostedService** is a .NET5 Worker Service.
+- **App4.RabbitConsumer.HostedService** is a .NET6 Worker Service.
   - The Hosted Service reads the messages from the Rabbitmq _"sample_2"_ queue and stores it into a Redis cache database.
 
-    
+
+# OpenTelemetry .NET Client
+
+The apps are using the following OpenTelemetry versions
+
+```xml
+<PackageReference Include="OpenTelemetry" Version="1.2.0-rc1" />
+<PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.2.0-rc1" />
+<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc8" />
+<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc8" />
+<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc8" />
+<PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.0.0-rc8" />
+<PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.0.0-rc8" />
+```
+
 # External Dependencies
 
 - Jaeger 

@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:6.0-bullseye-slim AS build-env
 WORKDIR /app
 
 # Set intermediate stage as build
@@ -14,7 +14,7 @@ RUN dotnet publish src/*.csproj -c Release -o /app/publish
 
 
 # Build runtime imagedock
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-bullseye-slim
 WORKDIR /app
 COPY --from=build-env /app/publish .
 COPY wait.sh .

@@ -6,7 +6,7 @@ namespace Microsoft.Extensions.Caching.StackExchangeRedis
     public static class RedisCacheExtensions
     {
 
-        public static ConnectionMultiplexer GetConnectionAsync(this RedisCache cache)
+        public static ConnectionMultiplexer GetConnection(this RedisCache cache)
         {
             //ensure connection is established
             typeof(RedisCache).InvokeMember("Connect", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, cache, new object[] { });

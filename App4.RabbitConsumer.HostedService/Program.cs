@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenTelemetry;
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -29,21 +28,27 @@ namespace App4.RabbitConsumer.HostedService
                     {
                         var connString =
                             $"{hostContext.Configuration["Redis:Host"]}:{hostContext.Configuration["Redis:Port"]}";
-
-                        options.Configuration = connString ;
+                        options.Configuration = connString;
                     });
 
-                    services.AddOpenTelemetryTracing((sp, builder) =>
+                    services.AddOpenTelemetryTracing(builder =>
                     {
-                        IConfiguration config = sp.GetRequiredService<IConfiguration>();
-                        RedisCache cache = (RedisCache)sp.GetRequiredService<IDistributedCache>();
+                        var provider = services.BuildServiceProvider();
+                        IConfiguration config = provider
+                                .GetRequiredService<IConfiguration>();
+
                         builder.AddAspNetCoreInstrumentation()
                             .AddHttpClientInstrumentation()
-                            .AddRedisInstrumentation(cache.GetConnectionAsync())
+                            .Configure((sp, builder) =>
+                              {
+                                  RedisCache cache = (RedisCache)sp.GetRequiredService<IDistributedCache>();
+                                  builder.AddRedisInstrumentation(cache.GetConnection());
+                              })
                             .AddSource(nameof(Worker))
                             .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App4"))
                             .AddJaegerExporter(opts =>
-                            {
+                            {                    
+                                
                                 opts.AgentHost = config["Jaeger:AgentHost"];
                                 opts.AgentPort = Convert.ToInt32(config["Jaeger:AgentPort"]);
                                 opts.ExportProcessorType = ExportProcessorType.Simple;
