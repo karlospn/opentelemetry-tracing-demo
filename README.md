@@ -7,21 +7,19 @@ The repository contains the following applications:
 
 ![Alt Text](https://github.com/karlospn/opentelemetry-tracing-demo/blob/master/docs/components-diagram.png)
 
-
-- **App1.WebApi** is a .NET6 WebApi with 2 endpoints:
-    - **/http** endpoint : makes a http call to App2 "dummy" endpoint
-    - **/publish-message** endpoint : publishes a message into a RabbitMq queue named _"sample"_
+- **App1.WebApi** is a **NET6 Web API** with 2 endpoints.
+    - The **/http** endpoint makes an HTTP request to the App2 _"/dummy"_ endpoint.
+    - The **/publish-message** endpoint queues a message into a Rabbit queue named _"sample"_.
     
-- **App2.WebApi** is a .NET6 WebApi with 2 endpoints
-    - **/dummy** endpoint : returns a fixed "Ok" response.
-    - **/sql-to-event** endpoint : receives a message and stores it inside an SQL Server. After the message is stored, it publishes an event into a RabbitMq queue named _"sample_2"_.
+- **App2.RabbitConsumer.Console** is a **NET6 console** application. 
+  - Dequeues messages from the Rabbit _"sample"_ queue and makes a HTTP request to the **App3** _"/sql-to-event"_ endpoint with the content of the message.
 
-- **App3.RabbitConsumer.Console** is a .NET6 console application. 
-  - Reads the messages from the Rabbitmq _"sample"_ queue and makes and Http call to **App2.WebApi** _"/sql-to-event"_ endpoint with the content of the message.
+- **App3.WebApi** is a **NET6 Web API** with 2 endpoints
+    - The **/dummy** endpoint returns a fixed _"Ok"_ response.
+    - The **/sql-to-event** endpoint receives a message via HTTP POST, stores it in a MSSQL Server and afterwards publishes the message as an event into a RabbitMq queue named _"sample_2"_.
 
-- **App4.RabbitConsumer.HostedService** is a .NET6 Worker Service.
-  - The Hosted Service reads the messages from the Rabbitmq _"sample_2"_ queue and stores it into a Redis cache database.
-
+- **App4.RabbitConsumer.HostedService** is a **NET6 Worker Service**.
+  - A Hosted Service reads the messages from the Rabbitmq _"sample_2"_ queue and stores it into a Redis cache database.
 
 # OpenTelemetry .NET Client
 
