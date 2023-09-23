@@ -6,7 +6,7 @@ networks:
     
 services:
   rabbitmq:
-    image: rabbitmq:3.6.15-management
+    image: rabbitmq:3.12-management
     ports:
       - 15672:15672
       - 5672
@@ -24,7 +24,7 @@ services:
       - tracing
 
   redis:
-    image: redis:6.2.1
+    image: redis:7.2.1
     ports:
     - 6379:6379
     networks:
@@ -36,14 +36,20 @@ services:
     restart: unless-stopped
     ports:
       - 5775:5775/udp
-      - 5778:5778
       - 6831:6831/udp
       - 6832:6832/udp
-      - 9411:9411
-      - 14268:14268
+      - 5778:5778
       - 16686:16686
+      - 14250:14250
+      - 14268:14268
+      - 14269:14269
+      - 4317:4317
+      - 4318:4318
+      - 9411:9411
     networks:
       - tracing
+    environment:
+      COLLECTOR_OTLP_ENABLED: true
 
   app1:
     build:
@@ -57,8 +63,9 @@ services:
       - jaeger
       - app3
     environment:
-      Jaeger__AgentHost: jaeger
-      Jaeger__AgentPort: 6831
+      Jaeger__Protocol: http
+      Jaeger__Port: 4317
+      Jaeger__Host: jaeger
       RabbitMq__Host: rabbitmq
       App3Endpoint: http://app3/dummy
 
@@ -75,8 +82,9 @@ services:
       - app3
     entrypoint: ["./wait.sh", "30", "dotnet", "App2.RabbitConsumer.Console.dll"]
     environment:
-      Jaeger__AgentHost: jaeger
-      Jaeger__AgentPort: 6831
+      Jaeger__Protocol: http
+      Jaeger__Port: 4317
+      Jaeger__Host: jaeger
       RabbitMq__Host: rabbitmq
       App3UriEndpoint: http://app3
 
@@ -93,8 +101,9 @@ services:
       - jaeger
       - sqlserver
     environment:
-      Jaeger__AgentHost: jaeger
-      Jaeger__AgentPort: 6831
+      Jaeger__Protocol: http
+      Jaeger__Port: 4317
+      Jaeger__Host: jaeger
       RabbitMq__Host: rabbitmq
       SqlDbConnString: server=sqlserver;user id=sa;password=Pass@Word1;
   
@@ -111,8 +120,9 @@ services:
       - redis
     entrypoint: ["./wait.sh", "30", "dotnet", "App4.RabbitConsumer.HostedService.dll"]
     environment:
-      Jaeger__AgentHost: jaeger
-      Jaeger__AgentPort: 6831
+      Jaeger__Protocol: http
+      Jaeger__Port: 4317
+      Jaeger__Host: jaeger
       RabbitMq__Host: rabbitmq
       Redis__Host: redis
       Redis__Port: 6379

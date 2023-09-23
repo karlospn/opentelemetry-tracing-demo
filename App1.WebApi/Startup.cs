@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenTelemetry;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -27,17 +28,17 @@ namespace App1.WebApi
         {
             services.AddControllers();
             services.AddHttpClient();
-            services.AddOpenTelemetryTracing(builder =>
+            services.AddOpenTelemetry().WithTracing(builder =>
             {
                 builder.AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddSource(nameof(PublishMessageController))
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App1"))
-                    .AddJaegerExporter(opts =>
+                    .AddOtlpExporter(opts =>
                     {
-                        opts.AgentHost = Configuration["Jaeger:AgentHost"];
-                        opts.AgentPort = Convert.ToInt32(Configuration["Jaeger:AgentPort"]);
-                        opts.ExportProcessorType = ExportProcessorType.Simple;
+                        opts.Endpoint =
+                            new Uri(
+                                $"{Configuration["Jaeger:Protocol"]}://{Configuration["Jaeger:Host"]}:{Configuration["Jaeger:Port"]}");
                     });
             });
         }

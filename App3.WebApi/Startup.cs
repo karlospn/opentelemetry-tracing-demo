@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -27,16 +29,17 @@ namespace App3.WebApi
             services.AddTransient<IRabbitRepository, RabbitRepository>();
 
             services.AddControllers().AddNewtonsoftJson();
-            services.AddOpenTelemetryTracing(builder =>
+            services.AddOpenTelemetry().WithTracing(builder =>
             {
                 builder.AddAspNetCoreInstrumentation()
                     .AddSource(nameof(RabbitRepository))
                     .AddSqlClientInstrumentation()
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App3"))
-                    .AddJaegerExporter(opts =>
+                    .AddOtlpExporter(opts =>
                     {
-                        opts.AgentHost = Configuration["Jaeger:AgentHost"];
-                        opts.AgentPort = Convert.ToInt32(Configuration["Jaeger:AgentPort"]);
+                        opts.Endpoint =
+                            new Uri(
+                                $"{Configuration["Jaeger:Protocol"]}://{Configuration["Jaeger:Host"]}:{Configuration["Jaeger:Port"]}");
                     });
             });
 
