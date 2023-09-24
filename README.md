@@ -1,7 +1,7 @@
-# Introduction
+# **Introduction**
 This repository contains an example about how to use opentelemetry for tracing when we have a bunch of distributed applications
 
-# Content
+# **Content**
 
 The repository contains the following applications:
 
@@ -21,7 +21,7 @@ The repository contains the following applications:
 - **App4.RabbitConsumer.HostedService** is a **NET 7 Worker Service**.
   - A Hosted Service reads the messages from the Rabbitmq _"sample_2"_ queue and stores it into a Redis cache database.
 
-# OpenTelemetry .NET Client
+# **OpenTelemetry .NET Client**
 
 The apps are using the following package versions:
 
@@ -35,7 +35,7 @@ The apps are using the following package versions:
   <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.0.0-rc9.10" />
 ```
 
-# External Dependencies
+# **External Dependencies**
 
 - Jaeger 
 - MSSQL Server
@@ -43,16 +43,20 @@ The apps are using the following package versions:
 - Redis Cache
 
 
-# How to run the apps
+# **How to run the apps**
+
+##  **Using docker-compose**
 
 The repository contains  a **docker-compose** file that starts up the 4 apps and also the external dependencies.   
 There is a **little caveat in the docker-compose**: 
 - You can control the order of service startup and shutdown with the depends_on option. However, for startup Compose does not wait until a container is “ready” only until it’s running.    
 That's a problem because both App3 and App4 need to wait for the rabbitMq container to be ready. To avoid this problem the docker-compose is overwriting the "entrypoint" for both apps and executing a shell script that makes both apps sleep 30 seconds before starting up.
 
-If you **don't want to use the docker-compose file**, you can use docker to start the dependencies manually, you can ran the following commands:
+## **Without using the docker-compose**
 
-- Run the Jaeger image:
+If you **don't want to use the docker-compose file**, you can use docker to start the dependencies one by one.
+
+- Run a Jaeger image:
 ```shell
 docker run -d --name jaeger \
   -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 \
@@ -96,13 +100,13 @@ docker run -d --name some-redis \
 
 # Output
 
-If you open jaeger you are going to see something like this
+If you open Jaeger, you are going to see something like this
 
 ![Alt Text](https://github.com/karlospn/opentelemetry-tracing-demo/blob/master/docs/jaeger.png)
 
 # Changelog
 
-### **09/23/2023**
+### **09/24/2023**
 - Update apps to .NET 7.
 - Update OpenTelemetry packages to the latest version.
 - Fix breaking changes on the apps due to the OpenTeleetry packages version upgrade.
