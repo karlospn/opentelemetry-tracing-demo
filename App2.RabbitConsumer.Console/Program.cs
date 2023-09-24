@@ -176,11 +176,11 @@ namespace App2.RabbitConsumer.Console
                 .AddHttpClientInstrumentation()
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App2"))
                 .AddSource(nameof(Program))
-                .AddJaegerExporter(opts =>
+                .AddOtlpExporter(opts =>
                 {
-                    opts.AgentHost = _configuration["Jaeger:AgentHost"];
-                    opts.AgentPort = Convert.ToInt32(_configuration["Jaeger:AgentPort"]);
-                    opts.ExportProcessorType = ExportProcessorType.Simple;
+                    opts.Endpoint =
+                        new Uri(
+                            $"{_configuration["Jaeger:Protocol"]}://{_configuration["Jaeger:Host"]}:{_configuration["Jaeger:Port"]}");
                 })
                 .Build();
         }

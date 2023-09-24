@@ -31,7 +31,7 @@ namespace App4.RabbitConsumer.HostedService
                         options.Configuration = connString;
                     });
 
-                    services.AddOpenTelemetryTracing(builder =>
+                    services.AddOpenTelemetry().WithTracing(builder =>
                     {
                         var provider = services.BuildServiceProvider();
                         IConfiguration config = provider
@@ -39,20 +39,20 @@ namespace App4.RabbitConsumer.HostedService
 
                         builder.AddAspNetCoreInstrumentation()
                             .AddHttpClientInstrumentation()
-                            .Configure((sp, builder) =>
-                              {
-                                  RedisCache cache = (RedisCache)sp.GetRequiredService<IDistributedCache>();
-                                  builder.AddRedisInstrumentation(cache.GetConnection());
-                              })
+                            .AddRedisInstrumentation()
+                            .ConfigureRedisInstrumentation((sp, i) =>
+                            {
+                                var cache = (RedisCache)sp.GetRequiredService<IDistributedCache>();
+                                i.AddConnection(cache.GetConnection());
+                            })
                             .AddSource(nameof(Worker))
                             .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App4"))
-                            .AddJaegerExporter(opts =>
-                            {                    
-                                
-                                opts.AgentHost = config["Jaeger:AgentHost"];
-                                opts.AgentPort = Convert.ToInt32(config["Jaeger:AgentPort"]);
-                                opts.ExportProcessorType = ExportProcessorType.Simple;
-                            });
+                            .AddOtlpExporter(opts =>
+                            {
+                                opts.Endpoint =
+                                    new Uri(
+                                        $"{config["Jaeger:Protocol"]}://{config["Jaeger:Host"]}:{config["Jaeger:Port"]}");
+                            }); ;
                     });
 
                 });
