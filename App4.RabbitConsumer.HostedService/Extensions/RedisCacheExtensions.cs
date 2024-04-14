@@ -5,7 +5,6 @@ namespace Microsoft.Extensions.Caching.StackExchangeRedis
 {
     public static class RedisCacheExtensions
     {
-
         public static ConnectionMultiplexer GetConnection(this RedisCache cache)
         {
             //ensure connection is established

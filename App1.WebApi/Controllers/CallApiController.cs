@@ -8,29 +8,20 @@ namespace App1.WebApi.Controllers
 {
     [ApiController]
     [Route("http")]
-    public class CallApiController : ControllerBase
+    public class CallApiController(
+        IHttpClientFactory httpClientFactory,
+        IConfiguration configuration,
+        ILogger<CallApiController> logger)
+        : ControllerBase
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IConfiguration _configuration;
-        private readonly ILogger<CallApiController> _logger;
-
-        public CallApiController(
-            IHttpClientFactory httpClientFactory, 
-            IConfiguration configuration, 
-            ILogger<CallApiController> logger)
-        {
-            _httpClientFactory = httpClientFactory;
-            _configuration = configuration;
-            _logger = logger;
-        }
-
         [HttpGet]
         public async Task<string> Get()
         { 
-            _logger.LogInformation($"Calling App3: {_configuration["App3Endpoint"]}");
-            var response  = await _httpClientFactory
+            logger.LogInformation("Calling App3");
+            
+            var response  = await httpClientFactory
                 .CreateClient()
-                .GetStringAsync(_configuration["App3Endpoint"]);
+                .GetStringAsync(configuration["App3Endpoint"]);
 
             return response;
 

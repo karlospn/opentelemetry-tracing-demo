@@ -15,36 +15,26 @@ using RabbitMQ.Client.Events;
 
 namespace App4.RabbitConsumer.HostedService
 {
-    public class Worker : BackgroundService
+    public class Worker(
+        ILogger<Worker> logger,
+        IDistributedCache cache,
+        IConfiguration configuration)
+        : BackgroundService
     {
         private static readonly ActivitySource Activity = new(nameof(Worker));
-        private static readonly TextMapPropagator Propagator = new TraceContextPropagator();
-
-        private readonly ILogger<Worker> _logger;
-        private readonly IDistributedCache _cache;
-        private readonly IConfiguration _configuration;
-
-
-        public Worker(ILogger<Worker> logger, 
-            IDistributedCache cache,
-            IConfiguration configuration)
-        {
-            _logger = logger;
-            _cache = cache;
-            _configuration = configuration;
-        }
+        private static readonly TraceContextPropagator Propagator = new ();
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             stoppingToken.ThrowIfCancellationRequested();
-            _logger.LogInformation("Worker started at: {time}", DateTimeOffset.Now);
+            logger.LogInformation("Worker started at: {time}", DateTimeOffset.Now);
             StartRabbitConsumer();
             return Task.CompletedTask;
         }
 
         private void StartRabbitConsumer()
         {
-            var factory = new ConnectionFactory() {HostName = _configuration["RabbitMq:Host"], DispatchConsumersAsync = true};
+            var factory = new ConnectionFactory() {HostName = configuration["RabbitMq:Host"], DispatchConsumersAsync = true};
             var rabbitMqConnection = factory.CreateConnection();
             var rabbitMqChannel = rabbitMqConnection.CreateModel();
 
@@ -82,14 +72,14 @@ namespace App4.RabbitConsumer.HostedService
 
                     ActivityHelper.AddActivityTags(activity);
 
-                    _logger.LogInformation("Message Received: " + message);
+                    logger.LogInformation("Message Received: " + message);
 
-                    var item = await _cache.GetStringAsync("rabbit.message");
+                    var item = await cache.GetStringAsync("rabbit.message");
                     if (string.IsNullOrEmpty(item))
                     {
-                        _logger.LogInformation("Add item into redis cache");
+                        logger.LogInformation("Add item into redis cache");
                         
-                        await _cache.SetStringAsync("rabbit.message", 
+                        await cache.SetStringAsync("rabbit.message", 
                             message, 
                             new DistributedCacheEntryOptions
                             {
@@ -101,7 +91,7 @@ namespace App4.RabbitConsumer.HostedService
             }
             catch (Exception ex)
             {
-                _logger.LogError($"There was an error processing the message: {ex} ");
+                logger.LogError(ex, "There was an error processing the message");
             }
         }
 
