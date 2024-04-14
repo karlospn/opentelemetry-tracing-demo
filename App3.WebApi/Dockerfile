@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0-bullseye-slim AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim AS build-env
 WORKDIR /app
 
 # Set intermediate stage as build
@@ -14,7 +14,7 @@ RUN dotnet publish src/*.csproj -c Release -o /app/publish
 
 
 # Build runtime imagedock
-FROM mcr.microsoft.com/dotnet/aspnet:7.0-bullseye-slim
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim
 WORKDIR /app
 COPY --from=build-env /app/publish .
 ENTRYPOINT ["dotnet", "App3.WebApi.dll"]
