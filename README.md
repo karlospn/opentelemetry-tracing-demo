@@ -107,23 +107,23 @@ If you open Jaeger, you are going to see something like this
 # Changelog
 
 ### **04/15/2024**
-- Update apps to .NET 8.
-- Update ``OpenTelemetry`` packages to the latest available version. This update also removes a couple of know security vulnerabilities.
-- Update ``System.Data.SqlClient`` to the latest available version to remove known security vulnerability.
-- From this point forward, ``App 1`` is a .NET 8 API that uses Controllers, meanwhile ``App 3`` is a minimal API with no controllers.
-- Delete ``Startup.cs`` from ``App 1`` an ``App 3``.
-- ``App 1`` and ``App 3`` now uses the newer ``WebApplication.CreateBuilder`` method to build the application, instead of the old ``WebHost.CreateDefaultBuilder`` method.
-- ``App 4`` now uses the newer ``Host.CreateApplicationBuilder;`` method to build a Host, instead of the old ``Host.CreateDefaultBuilder`` method.
-- Implement C# 12 primary constructor feature on every app.
-- Update Dockerfile base image from ``Bullseye`` distro (Debian 11) to ``Bookworm`` distro (Debian 12).
-- ``App 4`` now uses the [FusionCache](https://github.com/ZiggyCreatures/FusionCache/tree/main) library with a Redis Backplane instead of directly using ``StackExchange``.
-- Update the ``dockerfile-compose`` file to use the newest image versions of rabbitmq, redis and jaeger.
+- Updated apps to .NET 8.
+- Updated ``OpenTelemetry`` packages to the latest available version. This update also addresses several known security vulnerabilities.
+- Updated ``System.Data.SqlClient`` to the latest available version to mitigate known security vulnerabilities.
+- From this point forward, ``App 1`` will function as a .NET 8 API that utilizes Controllers, while ``App 3`` will operate as a minimal API without controllers.
+- Deleted ``Startup.cs`` from both App 1 and App 3.
+- ``App 1`` and ``App 3`` now employ the newer ``WebApplication.CreateBuilder`` method for application construction, replacing the previous ``WebHost.CreateDefaultBuilder`` method.
+- ``App 4`` now utilizes the newer ``Host.CreateApplicationBuilder`` method to construct a ``Host``, replacing the previous ``Host.CreateDefaultBuilder`` method.
+- Implemented the C# 12 primary constructor feature across all apps.
+- Updated Dockerfile base image from ``Bullseye`` distro (Debian 11) to ``Bookworm`` distro (Debian 12).
+- ``App 4`` now employs the [FusionCache](https://github.com/ZiggyCreatures/FusionCache/tree/main) library with a Redis Backplane, replacing the use of ``IDistributedCache``.
+- Updated the ``docker-compose`` file to utilize the latest image versions of RabbitMQ, Redis, and Jaeger.
 
 
 ### **09/24/2023**
-- Update apps to .NET 7.
-- Update OpenTelemetry packages to the latest version.
-- Fix breaking changes on the apps due to the OpenTeleetry packages version upgrade.
+- Updated apps to .NET 7.
+- Updated ``OpenTelemetry`` packages to the latest version.
+- Fix breaking changes on the apps due to the ``OpenTelemetry`` packages upgrade.
 - Removed the ``OpenTelemetry.Exporter.Jaeger`` NuGet package from the apps because it has been deprecated. It has been replaced by the ``OpenTelemetry.Exporter.OpenTelemetryProtocol`` package.
-- Update the ``RabbitMQ.Client`` NuGet package to the latest version.
-- Update the ``dockerfile-compose`` file to use the newest image versions of rabbitmq, redis and jaeger. Also the jaeger image is configured so can it can receive OpenTelemetry trace data via the OpenTelemetry Protocol.
+- Updated the ``RabbitMQ.Client`` NuGet package to the latest version.
+- Updated the ``docker-compose`` file to use the newest image versions of rabbitmq, redis and jaeger. Also the jaeger image is configured so can it can receive OpenTelemetry trace data via the OpenTelemetry Protocol.
