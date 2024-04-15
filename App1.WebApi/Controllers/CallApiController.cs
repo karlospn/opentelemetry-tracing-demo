@@ -15,15 +15,18 @@ namespace App1.WebApi.Controllers
         : ControllerBase
     {
         [HttpGet]
-        public async Task<string> Get()
+        public async Task<IActionResult> Get()
         { 
             logger.LogInformation("Calling App3");
-            
-            var response  = await httpClientFactory
-                .CreateClient()
-                .GetStringAsync(configuration["App3Endpoint"]);
 
-            return response;
+            var client = httpClientFactory.CreateClient("app3");
+            
+            var response = await client.GetAsync("dummy");
+
+            if (response.IsSuccessStatusCode)
+                return Ok(await response.Content.ReadAsStringAsync());
+
+            return StatusCode(500);
 
         }
     }

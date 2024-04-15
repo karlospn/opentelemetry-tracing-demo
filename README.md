@@ -108,7 +108,8 @@ If you open Jaeger, you are going to see something like this
 
 ### **04/15/2024**
 - Update apps to .NET 8.
-- Update OpenTelemetry packages to the latest available version. This update removes know security vulnerabilities.
+- Update ``OpenTelemetry`` packages to the latest available version. This update also removes a couple of know security vulnerabilities.
+- Update ``System.Data.SqlClient`` to the latest available version to remove known security vulnerability.
 - From this point forward, ``App 1`` is a .NET 8 API that uses Controllers, meanwhile ``App 3`` is a minimal API with no controllers.
 - Delete ``Startup.cs`` from ``App 1`` an ``App 3``.
 - ``App 1`` and ``App 3`` now uses the newer ``WebApplication.CreateBuilder`` method to build the application, instead of the old ``WebHost.CreateDefaultBuilder`` method.

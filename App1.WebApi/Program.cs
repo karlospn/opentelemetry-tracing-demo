@@ -29,6 +29,14 @@ namespace App1.WebApi
                     });
             });
 
+            builder.Services.AddHttpClient("app3", c =>
+            {
+                c.BaseAddress = new Uri(builder.Configuration["App3Endpoint"]!);
+                c.Timeout = TimeSpan.FromSeconds(15);
+                c.DefaultRequestHeaders.Add(
+                    "accept", "application/json");
+            });
+
             var app = builder.Build();
             app.MapControllers();
             app.Run();
