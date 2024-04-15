@@ -67,7 +67,7 @@ services:
       Jaeger__Port: 4317
       Jaeger__Host: jaeger
       RabbitMq__Host: rabbitmq
-      App3Endpoint: http://app3/dummy
+      App3Endpoint: http://app3/dummy:8080
 
   app2:
     stdin_open: true

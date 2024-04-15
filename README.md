@@ -26,13 +26,13 @@ The repository contains the following applications:
 The apps are using the following package versions:
 
 ```xml
-  <PackageReference Include="OpenTelemetry" Version="1.6.0" />
-  <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.5.1-beta.1" />
-  <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.6.0" />
-  <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.6.0" />
-  <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.5.1-beta.1" />
-  <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.5.1-beta.1" />
-  <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.0.0-rc9.10" />
+  <PackageReference Include="OpenTelemetry" Version="1.8.0" />
+  <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.1" />
+  <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.8.0" />
+  <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.8.0" />
+  <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.8.1" />
+  <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.8.0-beta.1" />
+  <PackageReference Include="ZiggyCreatures.FusionCache.OpenTelemetry" Version="1.0.0" />
 ```
 
 # **External Dependencies**
@@ -105,6 +105,19 @@ If you open Jaeger, you are going to see something like this
 ![Alt Text](https://github.com/karlospn/opentelemetry-tracing-demo/blob/master/docs/jaeger.png)
 
 # Changelog
+
+### **04/15/2024**
+- Update apps to .NET 8.
+- Update OpenTelemetry packages to the latest available version. This update removes know security vulnerabilities.
+- From this point forward, ``App 1`` is a .NET 8 API that uses Controllers, meanwhile ``App 3`` is a minimal API with no controllers.
+- Delete ``Startup.cs`` from ``App 1`` an ``App 3``.
+- ``App 1`` and ``App 3`` now uses the newer ``WebApplication.CreateBuilder`` method to build the application, instead of the old ``WebHost.CreateDefaultBuilder`` method.
+- ``App 4`` now uses the newer ``Host.CreateApplicationBuilder;`` method to build a Host, instead of the old ``Host.CreateDefaultBuilder`` method.
+- Implement C# 12 primary constructor feature on every app.
+- Update Dockerfile base image from ``Bullseye`` distro (Debian 11) to ``Bookworm`` distro (Debian 12).
+- ``App 4`` now uses the [FusionCache](https://github.com/ZiggyCreatures/FusionCache/tree/main) library with a Redis Backplane instead of directly using ``StackExchange``.
+- Update the ``dockerfile-compose`` file to use the newest image versions of rabbitmq, redis and jaeger.
+
 
 ### **09/24/2023**
 - Update apps to .NET 7.
