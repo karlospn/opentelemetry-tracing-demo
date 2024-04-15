@@ -86,7 +86,7 @@ services:
       Jaeger__Port: 4317
       Jaeger__Host: jaeger
       RabbitMq__Host: rabbitmq
-      App3UriEndpoint: http://app3
+      App3UriEndpoint: http://app3:8080
 
 
   app3:
