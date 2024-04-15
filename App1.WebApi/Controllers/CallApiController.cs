@@ -1,7 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace App1.WebApi.Controllers
@@ -10,7 +9,6 @@ namespace App1.WebApi.Controllers
     [Route("http")]
     public class CallApiController(
         IHttpClientFactory httpClientFactory,
-        IConfiguration configuration,
         ILogger<CallApiController> logger)
         : ControllerBase
     {
