@@ -41,7 +41,6 @@ namespace App4.RabbitConsumer.HostedService
                             new Uri(
                                 $"{builder.Configuration["Jaeger:Protocol"]}://{builder.Configuration["Jaeger:Host"]}:{builder.Configuration["Jaeger:Port"]}");
                     });
-                ;
             });
 
             var host = builder.Build();
