@@ -7,18 +7,18 @@ The repository contains the following applications:
 
 ![Alt Text](https://github.com/karlospn/opentelemetry-tracing-demo/blob/master/docs/components-diagram.png)
 
-- **App1.WebApi** is a **NET 7 Web API** with 2 endpoints.
+- **App1.WebApi** is a **NET 8 API** with 2 endpoints.
     - The **/http** endpoint makes an HTTP request to the App2 _"/dummy"_ endpoint.
     - The **/publish-message** endpoint queues a message into a Rabbit queue named _"sample"_.
     
 - **App2.RabbitConsumer.Console** is a **NET 7 console** application. 
   - Dequeues messages from the Rabbit _"sample"_ queue and makes a HTTP request to the **App3** _"/sql-to-event"_ endpoint with the content of the message.
 
-- **App3.WebApi** is a **NET 7 Web API** with 2 endpoints
+- **App3.WebApi** is a **NET 8 Minimal API** with 2 endpoints
     - The **/dummy** endpoint returns a fixed _"Ok"_ response.
     - The **/sql-to-event** endpoint receives a message via HTTP POST, stores it in a MSSQL Server and afterwards publishes the message as an event into a RabbitMq queue named _"sample_2"_.
 
-- **App4.RabbitConsumer.HostedService** is a **NET 7 Worker Service**.
+- **App4.RabbitConsumer.HostedService** is a **NET 8 Worker Service**.
   - A Hosted Service reads the messages from the Rabbitmq _"sample_2"_ queue and stores it into a Redis cache database.
 
 # **OpenTelemetry .NET Client**
@@ -79,7 +79,7 @@ docker run -d --name jaeger \
 docker run -d --name some-rabbit \
   -p 15672:15672 \
   -p 5672:5672 \
-  rabbitmq:3.12-management
+  rabbitmq:3.13.1-management
 ```
 - Run a MSSQL Server
 
@@ -95,7 +95,7 @@ docker run -e "ACCEPT_EULA=Y" \
 ```shell
 docker run -d --name some-redis \
   -p "6379:6379" \
-  redis:7.2.1
+  redis:7.2.4
 ```
 
 # Output
