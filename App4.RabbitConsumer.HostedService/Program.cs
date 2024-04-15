@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,25 +20,15 @@ namespace App4.RabbitConsumer.HostedService
 
             builder.Services.AddHostedService<Worker>();
 
-            var redisConnString = $"{builder.Configuration["Redis:Host"]}:{builder.Configuration["Redis:Port"]}";
-
-            builder.Services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = redisConnString;
-            });
-
-            builder.Services.AddRedisConnectionMultiplexer(redisConnString);
+            builder.Services.AddRedisFusionCacheService(
+                $"{builder.Configuration["Redis:Host"]}:{builder.Configuration["Redis:Port"]}",
+                Assembly.GetExecutingAssembly().GetName().Name);
 
             builder.Services.AddOpenTelemetry().WithTracing(b =>
             {
                 b.AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
-                    .AddRedisInstrumentation()
-                    .ConfigureRedisInstrumentation((sp, i) =>
-                    {
-                        var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
-                        i.AddConnection(multiplexer);
-                    })
+                    .AddFusionCacheInstrumentation()
                     .AddSource(nameof(Worker))
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("App4"))
                     .AddOtlpExporter(opts =>

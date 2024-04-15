@@ -12,12 +12,13 @@ using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace App4.RabbitConsumer.HostedService
 {
     public class Worker(
         ILogger<Worker> logger,
-        IDistributedCache cache,
+        IFusionCache cache,
         IConfiguration configuration)
         : BackgroundService
     {
@@ -74,16 +75,17 @@ namespace App4.RabbitConsumer.HostedService
 
                     logger.LogInformation("Message Received: " + message);
 
-                    var item = await cache.GetStringAsync("rabbit.message");
-                    if (string.IsNullOrEmpty(item))
+                    var result = await cache.GetOrDefaultAsync("rabbit.message", string.Empty);
+
+                    if (string.IsNullOrEmpty(result))
                     {
                         logger.LogInformation("Add item into redis cache");
-                        
-                        await cache.SetStringAsync("rabbit.message", 
-                            message, 
-                            new DistributedCacheEntryOptions
+
+                        await cache.SetAsync("rabbit.message",
+                            message,
+                            new FusionCacheEntryOptions
                             {
-                                AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1)
+                                Duration = TimeSpan.FromSeconds(30)
                             });
                     }
                 }
