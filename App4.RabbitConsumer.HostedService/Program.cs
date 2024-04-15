@@ -7,7 +7,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using StackExchange.Redis;
+using ZiggyCreatures.Caching.Fusion;
+using ZiggyCreatures.Caching.Fusion.Backplane.StackExchangeRedis;
+using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 
 
 namespace App4.RabbitConsumer.HostedService
@@ -20,9 +22,11 @@ namespace App4.RabbitConsumer.HostedService
 
             builder.Services.AddHostedService<Worker>();
 
-            builder.Services.AddRedisFusionCacheService(
-                $"{builder.Configuration["Redis:Host"]}:{builder.Configuration["Redis:Port"]}",
-                Assembly.GetExecutingAssembly().GetName().Name);
+            builder.Services.AddFusionCache()
+                .WithSerializer(new FusionCacheSystemTextJsonSerializer())
+                .WithBackplane(
+                    new RedisBackplane(new RedisBackplaneOptions { Configuration = $"{builder.Configuration["Redis:Host"]}:{builder.Configuration["Redis:Port"]}" })
+                );
 
             builder.Services.AddOpenTelemetry().WithTracing(b =>
             {
