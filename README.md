@@ -11,7 +11,7 @@ The repository contains the following applications:
     - The **/http** endpoint makes an HTTP request to the App2 _"/dummy"_ endpoint.
     - The **/publish-message** endpoint queues a message into a Rabbit queue named _"sample"_.
     
-- **App2.RabbitConsumer.Console** is a **NET 7 console** application. 
+- **App2.RabbitConsumer.Console** is a **NET 8 console** application. 
   - Dequeues messages from the Rabbit _"sample"_ queue and makes a HTTP request to the **App3** _"/sql-to-event"_ endpoint with the content of the message.
 
 - **App3.WebApi** is a **NET 8 Minimal API** with 2 endpoints
