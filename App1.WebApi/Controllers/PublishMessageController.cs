@@ -13,21 +13,13 @@ namespace App1.WebApi.Controllers
 {
     [ApiController]
     [Route("publish-message")]
-    public class PublishMessageController : ControllerBase
+    public class PublishMessageController(
+        ILogger<PublishMessageController> logger,
+        IConfiguration configuration)
+        : ControllerBase
     {
         private static readonly ActivitySource Activity = new(nameof(PublishMessageController));
         private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
-
-        private readonly ILogger<PublishMessageController> _logger;
-        private readonly IConfiguration _configuration;
-
-        public PublishMessageController(
-            ILogger<PublishMessageController> logger,
-            IConfiguration configuration)
-        {
-            _logger = logger;
-            _configuration = configuration;
-        }
 
         [HttpGet]
         public void Get()
@@ -36,7 +28,7 @@ namespace App1.WebApi.Controllers
             {
                 using (var activity = Activity.StartActivity("RabbitMq Publish", ActivityKind.Producer))
                 {
-                    var factory = new ConnectionFactory { HostName = _configuration["RabbitMq:Host"] };
+                    var factory = new ConnectionFactory { HostName = configuration["RabbitMq:Host"] };
                     using (var connection = factory.CreateConnection())
                     using (var channel = connection.CreateModel())
                     {
@@ -52,7 +44,7 @@ namespace App1.WebApi.Controllers
 
                         var body = Encoding.UTF8.GetBytes("I am app1");
 
-                        _logger.LogInformation("Publishing message to queue");
+                        logger.LogInformation("Publishing message to queue");
 
                         channel.BasicPublish(exchange: "",
                             routingKey: "sample",
@@ -63,7 +55,7 @@ namespace App1.WebApi.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError("Error trying to publish a message", e);
+                logger.LogError(e, "Error trying to publish a message");
                 throw;
             }
         }
@@ -85,7 +77,7 @@ namespace App1.WebApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to inject trace context.");
+                logger.LogError(ex, "Failed to inject trace context.");
             }
         }
     }

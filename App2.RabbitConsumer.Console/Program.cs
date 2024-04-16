@@ -21,7 +21,7 @@ namespace App2.RabbitConsumer.Console
     public class Program
     {
         private static readonly ActivitySource Activity = new(nameof(Program));
-        private static readonly TextMapPropagator Propagator = new TraceContextPropagator();
+        private static readonly TraceContextPropagator Propagator = new();
 
         private static IConfiguration _configuration;
         private static ILogger<Program> _logger;
@@ -107,7 +107,7 @@ namespace App2.RabbitConsumer.Console
             }
             catch (Exception ex)
             {
-                _logger.LogError($"There was an error processing the message: {ex} ");
+                _logger.LogError(ex, "There was an error processing the message");
             }
         }
 
@@ -124,7 +124,7 @@ namespace App2.RabbitConsumer.Console
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Failed to extract trace context: {ex}");
+                _logger.LogError(ex, "Failed to extract trace context");
             }
 
             return Enumerable.Empty<string>();

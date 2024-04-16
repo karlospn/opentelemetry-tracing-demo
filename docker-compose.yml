@@ -6,7 +6,7 @@ networks:
     
 services:
   rabbitmq:
-    image: rabbitmq:3.12-management
+    image: rabbitmq:3.13.1-management
     ports:
       - 15672:15672
       - 5672
@@ -24,14 +24,14 @@ services:
       - tracing
 
   redis:
-    image: redis:7.2.1
+    image: redis:7.2.4
     ports:
     - 6379:6379
     networks:
       - tracing
     
   jaeger:
-    image: jaegertracing/all-in-one
+    image: jaegertracing/all-in-one:1.56.0
     container_name: jaeger
     restart: unless-stopped
     ports:
@@ -55,7 +55,7 @@ services:
     build:
       context: ./App1.WebApi
     ports:
-      - "5000:80"
+      - "5000:8080"
     networks:
       - tracing
     depends_on: 
@@ -67,7 +67,7 @@ services:
       Jaeger__Port: 4317
       Jaeger__Host: jaeger
       RabbitMq__Host: rabbitmq
-      App3Endpoint: http://app3/dummy
+      App3Endpoint: http://app3:8080
 
   app2:
     stdin_open: true
@@ -86,14 +86,14 @@ services:
       Jaeger__Port: 4317
       Jaeger__Host: jaeger
       RabbitMq__Host: rabbitmq
-      App3UriEndpoint: http://app3
+      App3UriEndpoint: http://app3:8080
 
 
   app3:
     build:
       context: ./App3.WebApi
     ports:
-      - "5001:80"
+      - "5001:8080"
     networks:
       - tracing
     depends_on: 
